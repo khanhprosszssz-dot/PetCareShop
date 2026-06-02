@@ -1,0 +1,50 @@
+﻿@model PetCareShop.Models.CustomerLogin
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Đăng nhập tài khoản</h1>
+        <p>Đăng nhập để mua hàng và theo dõi thông tin cá nhân</p>
+    </div>
+</section>
+
+<section class="account-section">
+    <div class="container">
+        <div class="account-box">
+            <h2>Đăng nhập khách hàng</h2>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="login-error">
+                    @ViewBag.Error
+                </div>
+            }
+
+            <form asp-controller="CustomerAccount" asp-action="Login" method="post">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input asp-for="Email" placeholder="Nhập email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input asp-for="Password" type="password" placeholder="Nhập mật khẩu" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="account-btn">
+                    Đăng nhập
+                </button>
+            </form>
+
+            <p class="account-note">
+                Chưa có tài khoản?
+                <a asp-controller="CustomerAccount" asp-action="Register">Đăng ký ngay</a>
+            </p>
+        </div>
+    </div>
+</section>

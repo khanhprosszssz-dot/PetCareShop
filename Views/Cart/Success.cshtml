@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Đặt hàng thành công</h1>
+        <p>Cảm ơn bạn đã mua hàng tại PetCare Shop</p>
+    </div>
+</section>
+
+<section class="success-section">
+    <div class="container">
+        <div class="success-box">
+            <div class="success-icon">✅</div>
+
+            <h2>Đơn hàng của bạn đã được ghi nhận!</h2>
+
+            @if (TempData["OrderId"] != null)
+            {
+                <p>
+                    Mã đơn hàng của bạn là:
+                    <strong>#@TempData["OrderId"]</strong>
+                </p>
+            }
+
+            <p>
+                PetCare Shop sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận đơn hàng.
+            </p>
+
+            <a asp-controller="Product" asp-action="Index" class="btn-primary">
+                Tiếp tục mua hàng
+            </a>
+        </div>
+    </div>
+</section>

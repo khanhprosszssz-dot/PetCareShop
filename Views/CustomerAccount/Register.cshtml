@@ -1,0 +1,61 @@
+﻿@model PetCareShop.Models.Customer
+
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Đăng ký tài khoản</h1>
+        <p>Tạo tài khoản để mua hàng và theo dõi đơn hàng dễ dàng hơn</p>
+    </div>
+</section>
+
+<section class="account-section">
+    <div class="container">
+        <div class="account-box">
+            <h2>Tạo tài khoản khách hàng</h2>
+
+            <form asp-controller="CustomerAccount" asp-action="Register" method="post">
+                <div class="form-group">
+                    <label>Họ và tên</label>
+                    <input asp-for="FullName" placeholder="Nhập họ tên" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input asp-for="Phone" placeholder="Nhập số điện thoại" />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input asp-for="Email" placeholder="Nhập email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <textarea asp-for="Address" placeholder="Nhập địa chỉ"></textarea>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input asp-for="Password" type="password" placeholder="Nhập mật khẩu" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="account-btn">
+                    Đăng ký
+                </button>
+            </form>
+
+            <p class="account-note">
+                Đã có tài khoản?
+                <a asp-controller="CustomerAccount" asp-action="Login">Đăng nhập ngay</a>
+            </p>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,72 @@
+﻿@model PetCareShop.Models.Product
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Thêm sản phẩm</h1>
+        <p>Nhập thông tin và chọn ảnh sản phẩm mới</p>
+    </div>
+</section>
+
+<section class="admin-form-section">
+    <div class="container">
+        <div class="admin-form-box">
+            <form asp-controller="AdminProduct"
+                  asp-action="Create"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <div class="form-group">
+                    <label>Tên sản phẩm</label>
+                    <input asp-for="Name" placeholder="Nhập tên sản phẩm" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Danh mục</label>
+                    <select asp-for="Category">
+                        <option value="">-- Chọn danh mục --</option>
+                        <option value="Chó cảnh">Chó cảnh</option>
+                        <option value="Mèo cảnh">Mèo cảnh</option>
+                        <option value="Thức ăn">Thức ăn</option>
+                        <option value="Phụ kiện">Phụ kiện</option>
+                    </select>
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Giá</label>
+                    <input asp-for="Price" type="number" placeholder="Nhập giá sản phẩm" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Ảnh sản phẩm</label>
+                    <input asp-for="ImageFile" type="file" accept="image/*" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Mô tả</label>
+                    <textarea asp-for="Description" placeholder="Nhập mô tả sản phẩm"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="admin-form-actions">
+                    <button type="submit" class="admin-save-btn">
+                        Lưu sản phẩm
+                    </button>
+
+                    <a asp-controller="AdminProduct"
+                       asp-action="Index"
+                       class="admin-back-btn">
+                        Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

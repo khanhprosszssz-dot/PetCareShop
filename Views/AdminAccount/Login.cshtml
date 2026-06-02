@@ -1,0 +1,45 @@
+﻿@model PetCareShop.Models.AdminLogin
+
+@{
+    ViewData["Title"] = "Đăng nhập Admin";
+}
+
+<section class="admin-login-section">
+    <div class="admin-login-box">
+        <div class="admin-login-logo">
+            PetCare<span>Shop</span>
+        </div>
+
+        <h1>Đăng nhập Admin</h1>
+        <p>Vui lòng đăng nhập để quản lý sản phẩm và đơn hàng</p>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="login-error">
+                @ViewBag.Error
+            </div>
+        }
+
+        <form asp-controller="AdminAccount" asp-action="Login" method="post">
+            <div class="form-group">
+                <label>Tài khoản</label>
+                <input asp-for="Username" placeholder="Nhập tài khoản admin" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input asp-for="Password" type="password" placeholder="Nhập mật khẩu" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="admin-login-btn">
+                Đăng nhập
+            </button>
+        </form>
+
+        <a asp-controller="Home" asp-action="Index" class="back-home-link">
+            Quay về trang chủ
+        </a>
+    </div>
+</section>

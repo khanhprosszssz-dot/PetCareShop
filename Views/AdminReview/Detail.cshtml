@@ -1,0 +1,92 @@
+﻿@model PetCareShop.Models.ProductReview
+
+@{
+    ViewData["Title"] = "Chi tiết đánh giá";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Chi tiết đánh giá #@Model.Id</h1>
+        <p>Xem thông tin đầy đủ của đánh giá sản phẩm</p>
+    </div>
+</section>
+
+<section class="admin-form-section">
+    <div class="container">
+        <div class="review-detail-admin-box">
+            <div class="review-detail-admin-header">
+                <div class="review-avatar">
+                    @Model.CustomerName.Substring(0, 1).ToUpper()
+                </div>
+
+                <div>
+                    <h2>@Model.CustomerName</h2>
+                    <p>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+            </div>
+
+            <div class="review-detail-admin-info">
+                <p>
+                    <strong>Sản phẩm:</strong>
+                    @if (Model.Product != null)
+                    {
+                        @Model.Product.Name
+                    }
+                    else
+                    {
+                        <span>Không rõ</span>
+                    }
+                </p>
+
+                <p>
+                    <strong>Email khách hàng:</strong>
+                    @if (Model.Customer != null)
+                    {
+                        @Model.Customer.Email
+                    }
+                    else
+                    {
+                        <span>Không có tài khoản / không rõ</span>
+                    }
+                </p>
+
+                <p>
+                    <strong>Số sao:</strong>
+                    <span class="review-star-admin">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Model.Rating)
+                            {
+                                <span>★</span>
+                            }
+                            else
+                            {
+                                <span class="star-muted">★</span>
+                            }
+                        }
+                    </span>
+                </p>
+            </div>
+
+            <div class="review-detail-comment">
+                <h3>Nội dung đánh giá</h3>
+                <p>@Model.Comment</p>
+            </div>
+
+            <div class="admin-form-actions">
+                <a asp-controller="AdminReview"
+                   asp-action="Index"
+                   class="admin-back-btn">
+                    Quay lại
+                </a>
+
+                <a asp-controller="AdminReview"
+                   asp-action="Delete"
+                   asp-route-id="@Model.Id"
+                   class="delete-btn">
+                    Xóa đánh giá
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

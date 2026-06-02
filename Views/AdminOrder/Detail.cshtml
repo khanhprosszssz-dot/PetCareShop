@@ -1,0 +1,157 @@
+﻿@model PetCareShop.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Chi tiết đơn hàng #@Model.Id</h1>
+        <p>Thông tin khách hàng và sản phẩm đã đặt</p>
+    </div>
+</section>
+
+<section class="admin-section">
+    <div class="container order-detail-layout">
+        <div class="order-detail-main">
+            <div class="admin-table-box">
+                <h2>Danh sách sản phẩm</h2>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Ảnh</th>
+                            <th>Sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@item.ImageUrl" alt="@item.ProductName" class="admin-product-img" />
+                                </td>
+
+                                <td>@item.ProductName</td>
+
+                                <td>@item.Price.ToString("N0") đ</td>
+
+                                <td>@item.Quantity</td>
+
+                                <td>@item.Total.ToString("N0") đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="order-total-box">
+                    Tổng đơn hàng:
+                    <strong>@Model.TotalAmount.ToString("N0") đ</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-detail-side">
+            <div class="admin-form-box">
+                <h2>Thông tin khách hàng</h2>
+
+                <p><strong>Mã đơn:</strong> #@Model.Id</p>
+
+                <p><strong>Họ tên:</strong> @Model.FullName</p>
+
+                <p><strong>Số điện thoại:</strong> @Model.Phone</p>
+
+                <p><strong>Email:</strong> @Model.Email</p>
+
+                <p><strong>Địa chỉ:</strong> @Model.Address</p>
+
+                <p><strong>Ghi chú:</strong> @Model.Note</p>
+
+                <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+
+                @if (Model.Customer != null)
+                {
+                    <p><strong>Tài khoản:</strong> @Model.Customer.FullName</p>
+                    <p><strong>Email tài khoản:</strong> @Model.Customer.Email</p>
+                }
+                else
+                {
+                    <p><strong>Tài khoản:</strong> Khách chưa đăng nhập</p>
+                }
+
+                <form asp-controller="AdminOrder"
+                      asp-action="UpdateStatus"
+                      method="post"
+                      class="status-form">
+
+                    <input type="hidden" name="id" value="@Model.Id" />
+
+                    <div class="form-group">
+                        <label>Trạng thái đơn hàng</label>
+
+                        <select name="status">
+                            @if (Model.Status == "Chờ xác nhận")
+                            {
+                                <option selected>Chờ xác nhận</option>
+                            }
+                            else
+                            {
+                                <option>Chờ xác nhận</option>
+                            }
+
+                            @if (Model.Status == "Đã xác nhận")
+                            {
+                                <option selected>Đã xác nhận</option>
+                            }
+                            else
+                            {
+                                <option>Đã xác nhận</option>
+                            }
+
+                            @if (Model.Status == "Đang giao")
+                            {
+                                <option selected>Đang giao</option>
+                            }
+                            else
+                            {
+                                <option>Đang giao</option>
+                            }
+
+                            @if (Model.Status == "Hoàn thành")
+                            {
+                                <option selected>Hoàn thành</option>
+                            }
+                            else
+                            {
+                                <option>Hoàn thành</option>
+                            }
+
+                            @if (Model.Status == "Đã hủy")
+                            {
+                                <option selected>Đã hủy</option>
+                            }
+                            else
+                            {
+                                <option>Đã hủy</option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="admin-save-btn">
+                        Cập nhật trạng thái
+                    </button>
+                </form>
+
+                <a asp-controller="AdminOrder"
+                   asp-action="Index"
+                   class="admin-back-btn order-back-btn">
+                    Quay lại danh sách
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

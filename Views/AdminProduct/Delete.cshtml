@@ -1,0 +1,46 @@
+﻿@model PetCareShop.Models.Product
+
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Xóa sản phẩm</h1>
+        <p>Xác nhận xóa sản phẩm khỏi hệ thống</p>
+    </div>
+</section>
+
+<section class="admin-form-section">
+    <div class="container">
+        <div class="delete-confirm-box">
+            <img src="@Model.ImageUrl" alt="@Model.Name" />
+
+            <h2>Bạn có chắc muốn xóa sản phẩm này?</h2>
+
+            <p>
+                Sản phẩm: <strong>@Model.Name</strong>
+            </p>
+
+            <p>
+                Giá: <strong>@Model.Price.ToString("N0") đ</strong>
+            </p>
+
+            <form asp-controller="AdminProduct"
+                  asp-action="DeleteConfirmed"
+                  method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+
+                <button type="submit" class="delete-confirm-btn">
+                    Xác nhận xóa
+                </button>
+
+                <a asp-controller="AdminProduct"
+                   asp-action="Index"
+                   class="admin-back-btn">
+                    Hủy
+                </a>
+            </form>
+        </div>
+    </div>
+</section>

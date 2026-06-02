@@ -1,0 +1,113 @@
+﻿@model PetCareShop.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Chi tiết đơn hàng #@Model.Id</h1>
+        <p>Xem thông tin sản phẩm, người nhận và trạng thái đơn hàng</p>
+    </div>
+</section>
+
+<section class="customer-order-section">
+    <div class="container customer-order-detail-layout">
+        <div class="customer-order-main">
+            <div class="customer-detail-box">
+                <h2>Sản phẩm đã đặt</h2>
+
+                <div class="customer-detail-list">
+                    @foreach (var item in Model.OrderDetails)
+                    {
+                        <div class="customer-detail-item">
+                            <img src="@item.ImageUrl" alt="@item.ProductName" />
+
+                            <div class="customer-detail-info">
+                                <h3>@item.ProductName</h3>
+                                <p>Đơn giá: @item.Price.ToString("N0") đ</p>
+                                <p>Số lượng: @item.Quantity</p>
+                            </div>
+
+                            <div class="customer-detail-price">
+                                @item.Total.ToString("N0") đ
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="customer-detail-total">
+                    <span>Tổng thanh toán</span>
+                    <strong>@Model.TotalAmount.ToString("N0") đ</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="customer-order-side">
+            <div class="customer-detail-box">
+                <h2>Thông tin đơn hàng</h2>
+
+                <div class="customer-info-row">
+                    <span>Mã đơn hàng</span>
+                    <strong>#@Model.Id</strong>
+                </div>
+
+                <div class="customer-info-row">
+                    <span>Trạng thái</span>
+                    <strong>@Model.Status</strong>
+                </div>
+
+                <div class="customer-info-row">
+                    <span>Ngày đặt</span>
+                    <strong>@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</strong>
+                </div>
+
+                <div class="customer-info-row">
+                    <span>Người nhận</span>
+                    <strong>@Model.FullName</strong>
+                </div>
+
+                <div class="customer-info-row">
+                    <span>Số điện thoại</span>
+                    <strong>@Model.Phone</strong>
+                </div>
+
+                <div class="customer-info-row">
+                    <span>Email</span>
+                    <strong>@Model.Email</strong>
+                </div>
+
+                <div class="customer-info-address">
+                    <span>Địa chỉ nhận hàng</span>
+                    <p>@Model.Address</p>
+                </div>
+
+                <div class="customer-info-address">
+                    <span>Ghi chú</span>
+                    <p>@Model.Note</p>
+                </div>
+
+                @if (Model.Status == "Chờ xác nhận")
+                {
+                    <form asp-controller="CustomerOrder"
+                          asp-action="Cancel"
+                          method="post"
+                          onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này không?');">
+
+                        <input type="hidden" name="id" value="@Model.Id" />
+
+                        <button type="submit" class="cancel-order-btn">
+                            Hủy đơn hàng
+                        </button>
+                    </form>
+                }
+
+                <a asp-controller="CustomerOrder"
+                   asp-action="Index"
+                   class="back-order-btn">
+                    Quay lại đơn hàng của tôi
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

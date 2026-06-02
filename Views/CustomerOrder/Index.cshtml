@@ -1,0 +1,86 @@
+﻿@model List<PetCareShop.Models.Order>
+
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Đơn hàng của tôi</h1>
+        <p>Theo dõi lịch sử mua hàng và trạng thái đơn hàng của bạn</p>
+    </div>
+</section>
+
+<section class="customer-order-section">
+    <div class="container">
+        @if (Model.Count == 0)
+        {
+            <div class="empty-order-box">
+                <div class="empty-order-icon">🧾</div>
+                <h2>Bạn chưa có đơn hàng nào</h2>
+                <p>Hãy chọn sản phẩm yêu thích và đặt hàng ngay.</p>
+
+                <a asp-controller="Product" asp-action="Index" class="btn-primary">
+                    Mua sắm ngay
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="customer-order-header">
+                <h2>Lịch sử đơn hàng</h2>
+                <span>@Model.Count đơn hàng</span>
+            </div>
+
+            <div class="customer-order-list">
+                @foreach (var order in Model)
+                {
+                    <div class="customer-order-card">
+                        <div class="customer-order-left">
+                            <div class="order-code">
+                                Đơn hàng #@order.Id
+                            </div>
+
+                            <p>
+                                <strong>Ngày đặt:</strong>
+                                @order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                            </p>
+
+                            <p>
+                                <strong>Người nhận:</strong>
+                                @order.FullName
+                            </p>
+
+                            <p>
+                                <strong>Số điện thoại:</strong>
+                                @order.Phone
+                            </p>
+
+                            <p>
+                                <strong>Địa chỉ:</strong>
+                                @order.Address
+                            </p>
+                        </div>
+
+                        <div class="customer-order-right">
+                            <span class="status-badge">
+                                @order.Status
+                            </span>
+
+                            <strong class="customer-order-total">
+                                @order.TotalAmount.ToString("N0") đ
+                            </strong>
+
+                            <a asp-controller="CustomerOrder"
+                               asp-action="Detail"
+                               asp-route-id="@order.Id"
+                               class="view-order-btn">
+                                Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>

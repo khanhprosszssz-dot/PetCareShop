@@ -1,0 +1,171 @@
+﻿@model List<PetCareShop.Controllers.DailyRevenueViewModel>
+
+@{
+    ViewData["Title"] = "Thống kê doanh thu";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Thống kê doanh thu</h1>
+        <p>Theo dõi doanh thu, đơn hàng và tình trạng kinh doanh của PetCare Shop</p>
+    </div>
+</section>
+
+<section class="statistic-section">
+    <div class="container">
+        <div class="statistic-filter-box">
+            <form asp-controller="AdminStatistic"
+                  asp-action="Index"
+                  method="get"
+                  class="statistic-filter-form">
+
+                <div class="form-group">
+                    <label>Chọn tháng</label>
+                    <select name="month">
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            if (ViewBag.SelectedMonth == i)
+                            {
+                                <option value="@i" selected>Tháng @i</option>
+                            }
+                            else
+                            {
+                                <option value="@i">Tháng @i</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Chọn năm</label>
+                    <select name="year">
+                        @for (int y = DateTime.Now.Year - 3; y <= DateTime.Now.Year + 1; y++)
+                        {
+                            if (ViewBag.SelectedYear == y)
+                            {
+                                <option value="@y" selected>@y</option>
+                            }
+                            else
+                            {
+                                <option value="@y">@y</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <button type="submit" class="statistic-filter-btn">
+                    Xem thống kê
+                </button>
+            </form>
+        </div>
+
+        <div class="statistic-grid">
+            <div class="statistic-card">
+                <div class="statistic-icon">📅</div>
+                <div>
+                    <h3>@ViewBag.TodayRevenue.ToString("N0") đ</h3>
+                    <p>Doanh thu hôm nay</p>
+                </div>
+            </div>
+
+            <div class="statistic-card">
+                <div class="statistic-icon">📈</div>
+                <div>
+                    <h3>@ViewBag.MonthRevenue.ToString("N0") đ</h3>
+                    <p>Doanh thu tháng @ViewBag.SelectedMonth/@ViewBag.SelectedYear</p>
+                </div>
+            </div>
+
+            <div class="statistic-card">
+                <div class="statistic-icon">🧾</div>
+                <div>
+                    <h3>@ViewBag.TotalOrdersInMonth</h3>
+                    <p>Đơn hàng trong tháng</p>
+                </div>
+            </div>
+
+            <div class="statistic-card">
+                <div class="statistic-icon">✅</div>
+                <div>
+                    <h3>@ViewBag.TotalCompletedOrders</h3>
+                    <p>Tổng đơn hoàn thành</p>
+                </div>
+            </div>
+
+            <div class="statistic-card">
+                <div class="statistic-icon">❌</div>
+                <div>
+                    <h3>@ViewBag.TotalCancelledOrders</h3>
+                    <p>Tổng đơn đã hủy</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="statistic-table-box">
+            <div class="admin-header">
+                <h2>Doanh thu từng ngày</h2>
+
+                <a asp-controller="AdminDashboard"
+                   asp-action="Index"
+                   class="admin-add-btn">
+                    Về Dashboard
+                </a>
+            </div>
+
+            <div class="admin-table-box">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Số đơn</th>
+                            <th>Đơn đã hủy</th>
+                            <th>Doanh thu</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Date.ToString("dd/MM/yyyy")</td>
+
+                                <td>@item.OrderCount</td>
+
+                                <td>@item.CancelledCount</td>
+
+                                <td>
+                                    <strong class="revenue-text">
+                                        @item.Revenue.ToString("N0") đ
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @if (item.OrderCount == 0)
+                                    {
+                                        <span class="stat-note-muted">Không có đơn hàng</span>
+                                    }
+                                    else if (item.Revenue == 0)
+                                    {
+                                        <span class="stat-note-danger">Không có doanh thu</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="stat-note-success">Có phát sinh doanh thu</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @if (Model.Count == 0)
+                {
+                    <div class="empty-admin">
+                        Không có dữ liệu thống kê.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,169 @@
+﻿@using PetCareShop.Extensions
+@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - PetCare Shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container header-inner">
+            <a asp-controller="Home" asp-action="Index" class="logo">
+                PetCare<span>Shop</span>
+            </a>
+
+            <nav class="main-nav">
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <a asp-controller="Product" asp-action="Index">Sản phẩm</a>
+                <a asp-controller="Home" asp-action="About">Giới thiệu</a>
+                <a asp-controller="Home" asp-action="Contact">Liên hệ</a>
+
+                @if (Context.Session.GetString("AdminLogin") == "true")
+                {
+                    <div class="nav-dropdown">
+                        <button type="button" class="dropdown-btn">
+                            Quản trị ▾
+                        </button>
+
+                        <div class="dropdown-menu">
+                            <a asp-controller="AdminDashboard" asp-action="Index">
+                                Dashboard
+                            </a>
+
+                            <a asp-controller="AdminProduct" asp-action="Index">
+                                Quản lý sản phẩm
+                            </a>
+
+                            <a asp-controller="AdminOrder" asp-action="Index">
+                                Quản lý đơn hàng
+                            </a>
+
+                            <a asp-controller="AdminReview" asp-action="Index">
+                                Quản lý đánh giá
+                            </a>
+
+                            <a asp-controller="AdminStatistic" asp-action="Index">
+                                Thống kê doanh thu
+                            </a>
+
+                            <a asp-controller="AdminAccount" asp-action="Logout">
+                                Đăng xuất Admin
+                            </a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="AdminAccount" asp-action="Login">Admin</a>
+                }
+
+                @if (Context.Session.GetString("CustomerLogin") == "true")
+                {
+                    <div class="nav-dropdown">
+                        <button type="button" class="dropdown-btn account-btn-nav">
+                            @Context.Session.GetString("CustomerName") ▾
+                        </button>
+
+                        <div class="dropdown-menu">
+                            <a asp-controller="CustomerProfile" asp-action="Index">
+                                Hồ sơ cá nhân
+                            </a>
+
+                            <a asp-controller="CustomerOrder" asp-action="Index">
+                                Đơn hàng của tôi
+                            </a>
+
+                            <a asp-controller="Product" asp-action="Index">
+                                Tiếp tục mua hàng
+                            </a>
+
+                            <a asp-controller="CustomerAccount" asp-action="Logout">
+                                Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="nav-dropdown">
+                        <button type="button" class="dropdown-btn">
+                            Tài khoản ▾
+                        </button>
+
+                        <div class="dropdown-menu">
+                            <a asp-controller="CustomerAccount" asp-action="Login">
+                                Đăng nhập
+                            </a>
+
+                            <a asp-controller="CustomerAccount" asp-action="Register">
+                                Đăng ký
+                            </a>
+                        </div>
+                    </div>
+                }
+
+                <a asp-controller="Cart" asp-action="Index" class="cart-link">
+                    Giỏ hàng
+                    <span class="cart-count">@CartHelper.GetCartCount(Context.Session)</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div>
+                <h3>PetCare Shop</h3>
+                <p>
+                    Shop thú cưng chuyên nghiệp, cung cấp chó mèo, phụ kiện,
+                    thức ăn và dịch vụ chăm sóc thú cưng.
+                </p>
+            </div>
+
+            <div>
+                <h4>Liên kết</h4>
+                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <a asp-controller="Product" asp-action="Index">Sản phẩm</a>
+                <a asp-controller="Home" asp-action="About">Giới thiệu</a>
+                <a asp-controller="Home" asp-action="Contact">Liên hệ</a>
+            </div>
+
+            <div>
+                <h4>Tài khoản</h4>
+
+                @if (Context.Session.GetString("CustomerLogin") == "true")
+                {
+                    <a asp-controller="CustomerProfile" asp-action="Index">Hồ sơ cá nhân</a>
+                    <a asp-controller="CustomerOrder" asp-action="Index">Đơn hàng của tôi</a>
+                    <a asp-controller="CustomerAccount" asp-action="Logout">Đăng xuất</a>
+                }
+                else
+                {
+                    <a asp-controller="CustomerAccount" asp-action="Login">Đăng nhập</a>
+                    <a asp-controller="CustomerAccount" asp-action="Register">Đăng ký</a>
+                }
+
+                <p>Hotline: 0909 999 999</p>
+                <p>Email: petcare@gmail.com</p>
+                <p>Địa chỉ: Đà Lạt, Việt Nam</p>
+            </div>
+        </div>
+
+        <div class="copyright">
+            © 2026 PetCare Shop. All rights reserved.
+        </div>
+    </footer>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,141 @@
+﻿@model List<PetCareShop.Models.Order>
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <p>Tổng quan hoạt động của PetCare Shop</p>
+    </div>
+</section>
+
+<section class="dashboard-section">
+    <div class="container">
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="dashboard-icon">📦</div>
+                <div>
+                    <h3>@ViewBag.TotalProducts</h3>
+                    <p>Tổng sản phẩm</p>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="dashboard-icon">🧾</div>
+                <div>
+                    <h3>@ViewBag.TotalOrders</h3>
+                    <p>Tổng đơn hàng</p>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="dashboard-icon">⏳</div>
+                <div>
+                    <h3>@ViewBag.PendingOrders</h3>
+                    <p>Chờ xác nhận</p>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="dashboard-icon">⭐</div>
+                <div>
+                    <h3>@ViewBag.TotalReviews</h3>
+                    <p>Tổng đánh giá</p>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="dashboard-icon">💰</div>
+                <div>
+                    <h3>@ViewBag.TotalRevenue.ToString("N0") đ</h3>
+                    <p>Tổng doanh thu</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-actions">
+            <a asp-controller="AdminProduct" asp-action="Index">
+                Quản lý sản phẩm
+            </a>
+
+            <a asp-controller="AdminOrder" asp-action="Index">
+                Quản lý đơn hàng
+            </a>
+
+            <a asp-controller="AdminReview" asp-action="Index">
+                Quản lý đánh giá
+            </a>
+
+            <a asp-controller="AdminStatistic" asp-action="Index">
+                Thống kê doanh thu
+            </a>
+
+            <a asp-controller="Product" asp-action="Index">
+                Xem trang sản phẩm
+            </a>
+        </div>
+
+        <div class="dashboard-latest">
+            <div class="admin-header">
+                <h2>Đơn hàng mới nhất</h2>
+
+                <a asp-controller="AdminOrder"
+                   asp-action="Index"
+                   class="admin-add-btn">
+                    Xem tất cả
+                </a>
+            </div>
+
+            <div class="admin-table-box">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Số điện thoại</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Chi tiết</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>#@item.Id</td>
+                                <td>@item.FullName</td>
+                                <td>@item.Phone</td>
+                                <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@item.TotalAmount.ToString("N0") đ</td>
+                                <td>
+                                    <span class="status-badge">
+                                        @item.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <a asp-controller="AdminOrder"
+                                       asp-action="Detail"
+                                       asp-route-id="@item.Id"
+                                       class="edit-btn">
+                                        Xem
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @if (Model.Count == 0)
+                {
+                    <div class="empty-admin">
+                        Chưa có đơn hàng nào.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

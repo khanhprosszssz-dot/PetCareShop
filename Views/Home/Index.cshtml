@@ -1,0 +1,127 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<section class="hero-section">
+    <div class="container hero-grid">
+        <div class="hero-content">
+            <span class="hero-badge">PetCare Shop - Chăm sóc thú cưng chuyên nghiệp</span>
+
+            <h1>
+                Thế giới thú cưng đáng yêu dành cho bạn
+            </h1>
+
+            <p>
+                PetCare Shop cung cấp chó mèo cảnh, thức ăn, phụ kiện, đồ chơi và dịch vụ chăm sóc thú cưng chất lượng cao.
+            </p>
+
+            <div class="hero-actions">
+                <a asp-controller="Product" asp-action="Index" class="btn-primary">
+                    Xem sản phẩm
+                </a>
+
+                <a asp-controller="Home" asp-action="Contact" class="btn-outline">
+                    Liên hệ tư vấn
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-image">
+            <img src="~/images/banners/pet-banner.jpg" alt="PetCare Shop" />
+        </div>
+    </div>
+</section>
+
+<section class="category-section">
+    <div class="container">
+        <h2 class="section-title">Danh mục nổi bật</h2>
+        <p class="section-desc">Chọn nhanh nhu cầu chăm sóc thú cưng của bạn</p>
+
+        <div class="category-grid">
+            <div class="category-card">
+                <img src="~/images/products/dog.jpg" alt="Chó cảnh" />
+                <h3>Chó cảnh</h3>
+                <p>Các giống chó đáng yêu, khỏe mạnh, được chăm sóc kỹ lưỡng.</p>
+            </div>
+
+            <div class="category-card">
+                <img src="~/images/products/cat.jpg" alt="Mèo cảnh" />
+                <h3>Mèo cảnh</h3>
+                <p>Mèo Anh lông ngắn, mèo Ba Tư, mèo tai cụp và nhiều giống khác.</p>
+            </div>
+
+            <div class="category-card">
+                <img src="~/images/products/food.jpg" alt="Thức ăn thú cưng" />
+                <h3>Thức ăn</h3>
+                <p>Thức ăn hạt, pate, snack dinh dưỡng dành cho chó mèo.</p>
+            </div>
+
+            <div class="category-card">
+                <img src="~/images/products/accessory.jpg" alt="Phụ kiện thú cưng" />
+                <h3>Phụ kiện</h3>
+                <p>Chuồng, dây dắt, đồ chơi, vòng cổ và phụ kiện chăm sóc.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="service-section">
+    <div class="container service-grid">
+        <div class="service-image">
+            <img src="~/images/banners/pet-service.jpg" alt="Dịch vụ thú cưng" />
+        </div>
+
+        <div class="service-content">
+            <span class="small-title">Dịch vụ của chúng tôi</span>
+            <h2>Chăm sóc thú cưng toàn diện</h2>
+
+            <p>
+                Không chỉ bán sản phẩm, PetCare Shop còn mang đến dịch vụ tư vấn, chăm sóc, làm đẹp và hỗ trợ khách hàng trong quá trình nuôi thú cưng.
+            </p>
+
+            <div class="service-list">
+                <div>
+                    <strong>01</strong>
+                    <span>Tư vấn chọn thú cưng phù hợp</span>
+                </div>
+
+                <div>
+                    <strong>02</strong>
+                    <span>Thức ăn và phụ kiện chất lượng</span>
+                </div>
+
+                <div>
+                    <strong>03</strong>
+                    <span>Hỗ trợ chăm sóc sau mua</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="why-section">
+    <div class="container">
+        <h2 class="section-title">Vì sao chọn PetCare Shop?</h2>
+        <p class="section-desc">Dịch vụ tận tâm, sản phẩm rõ nguồn gốc, giao diện mua hàng dễ sử dụng</p>
+
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon">🐶</div>
+                <h3>Thú cưng khỏe mạnh</h3>
+                <p>Các bé được chăm sóc kỹ, theo dõi sức khỏe và tư vấn đầy đủ trước khi về nhà mới.</p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">🛒</div>
+                <h3>Sản phẩm đa dạng</h3>
+                <p>Đầy đủ thức ăn, phụ kiện, đồ chơi và vật dụng cần thiết cho chó mèo.</p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">🚚</div>
+                <h3>Giao hàng nhanh</h3>
+                <p>Hỗ trợ giao hàng nội thành và đóng gói sản phẩm cẩn thận, an toàn.</p>
+            </div>
+        </div>
+    </div>
+</section>

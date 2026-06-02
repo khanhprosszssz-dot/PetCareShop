@@ -1,0 +1,75 @@
+﻿@model List<PetCareShop.Models.Product>
+
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Quản lý sản phẩm</h1>
+        <p>Thêm, sửa, xóa sản phẩm trong hệ thống PetCare Shop</p>
+    </div>
+</section>
+
+<section class="admin-section">
+    <div class="container">
+        <div class="admin-header">
+            <h2>Danh sách sản phẩm</h2>
+
+            <a asp-controller="AdminProduct"
+               asp-action="Create"
+               class="admin-add-btn">
+                + Thêm sản phẩm
+            </a>
+        </div>
+
+        <div class="admin-table-box">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá</th>
+                        <th>Mô tả</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@item.ImageUrl" alt="@item.Name" class="admin-product-img" />
+                            </td>
+
+                            <td>@item.Name</td>
+                            <td>@item.Category</td>
+                            <td>@item.Price.ToString("N0") đ</td>
+                            <td>@item.Description</td>
+
+                            <td>
+                                <div class="admin-actions">
+                                    <a asp-controller="AdminProduct"
+                                       asp-action="Edit"
+                                       asp-route-id="@item.Id"
+                                       class="edit-btn">
+                                        Sửa
+                                    </a>
+
+                                    <a asp-controller="AdminProduct"
+                                       asp-action="Delete"
+                                       asp-route-id="@item.Id"
+                                       class="delete-btn">
+                                        Xóa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

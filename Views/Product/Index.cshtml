@@ -1,0 +1,253 @@
+﻿@model PetCareShop.Models.ProductListViewModel
+
+@{
+    ViewData["Title"] = "Sản phẩm";
+}
+
+<section class="page-banner">
+    <div class="container">
+        <h1>Sản phẩm thú cưng</h1>
+        <p>Tìm kiếm, lọc, sắp xếp và phân trang sản phẩm dễ dàng</p>
+    </div>
+</section>
+
+<section class="product-section">
+    <div class="container">
+        <div class="product-layout">
+            <aside class="product-sidebar">
+                <h3>Bộ lọc</h3>
+
+                <form asp-controller="Product" asp-action="Index" method="get" class="filter-form">
+                    <div class="filter-group">
+                        <label>Tìm kiếm</label>
+                        <input type="text"
+                               name="search"
+                               value="@Model.Search"
+                               placeholder="Tên sản phẩm..." />
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Danh mục</label>
+                        <select name="category">
+                            @if (Model.Category == null)
+                            {
+                                <option value="" selected>Tất cả sản phẩm</option>
+                            }
+                            else
+                            {
+                                <option value="">Tất cả sản phẩm</option>
+                            }
+
+                            @foreach (var item in ViewBag.Categories)
+                            {
+                                if (Model.Category == item)
+                                {
+                                    <option value="@item" selected>@item</option>
+                                }
+                                else
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Giá thấp nhất</label>
+                        <input type="number"
+                               name="minPrice"
+                               value="@Model.MinPrice"
+                               placeholder="Ví dụ: 100000" />
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Giá cao nhất</label>
+                        <input type="number"
+                               name="maxPrice"
+                               value="@Model.MaxPrice"
+                               placeholder="Ví dụ: 10000000" />
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Sắp xếp</label>
+                        <select name="sort">
+                            @if (Model.Sort == null)
+                            {
+                                <option value="" selected>Mới nhất</option>
+                            }
+                            else
+                            {
+                                <option value="">Mới nhất</option>
+                            }
+
+                            @if (Model.Sort == "price_asc")
+                            {
+                                <option value="price_asc" selected>Giá tăng dần</option>
+                            }
+                            else
+                            {
+                                <option value="price_asc">Giá tăng dần</option>
+                            }
+
+                            @if (Model.Sort == "price_desc")
+                            {
+                                <option value="price_desc" selected>Giá giảm dần</option>
+                            }
+                            else
+                            {
+                                <option value="price_desc">Giá giảm dần</option>
+                            }
+
+                            @if (Model.Sort == "name_asc")
+                            {
+                                <option value="name_asc" selected>Tên A - Z</option>
+                            }
+                            else
+                            {
+                                <option value="name_asc">Tên A - Z</option>
+                            }
+
+                            @if (Model.Sort == "name_desc")
+                            {
+                                <option value="name_desc" selected>Tên Z - A</option>
+                            }
+                            else
+                            {
+                                <option value="name_desc">Tên Z - A</option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="filter-btn">
+                        Áp dụng lọc
+                    </button>
+
+                    <a asp-controller="Product"
+                       asp-action="Index"
+                       class="reset-filter-btn">
+                        Xóa bộ lọc
+                    </a>
+                </form>
+
+                <div class="quick-category">
+                    <h3>Danh mục nhanh</h3>
+
+                    <a asp-controller="Product"
+                       asp-action="Index"
+                       class="category-filter @(Model.Category == null ? "active" : "")">
+                        Tất cả sản phẩm
+                    </a>
+
+                    @foreach (var item in ViewBag.Categories)
+                    {
+                        <a asp-controller="Product"
+                           asp-action="Index"
+                           asp-route-category="@item"
+                           class="category-filter @(Model.Category == item ? "active" : "")">
+                            @item
+                        </a>
+                    }
+                </div>
+            </aside>
+
+            <div class="product-content">
+                <div class="product-top">
+                    <h2>Danh sách sản phẩm</h2>
+                    <span>@Model.Products.Count sản phẩm</span>
+                </div>
+
+                @if (Model.Products.Count == 0)
+                {
+                    <div class="no-product-box">
+                        <div>🔍</div>
+                        <h3>Không tìm thấy sản phẩm</h3>
+                        <p>Hãy thử đổi từ khóa, danh mục hoặc khoảng giá khác.</p>
+
+                        <a asp-controller="Product" asp-action="Index" class="btn-primary">
+                            Xem tất cả sản phẩm
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="product-grid">
+                        @foreach (var product in Model.Products)
+                        {
+                            <div class="product-card">
+                                <div class="product-img">
+                                    <img src="@product.ImageUrl" alt="@product.Name" />
+                                </div>
+
+                                <div class="product-info">
+                                    <span class="product-category">@product.Category</span>
+
+                                    <h3>@product.Name</h3>
+
+                                    <p>@product.Description</p>
+
+                                    <div class="product-bottom">
+                                        <strong>@product.Price.ToString("N0") đ</strong>
+
+                                        <a asp-controller="Product"
+                                           asp-action="Detail"
+                                           asp-route-id="@product.Id">
+                                            Xem chi tiết
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @if (Model.TotalPages > 1)
+                    {
+                        <div class="pagination">
+                            @if (Model.CurrentPage > 1)
+                            {
+                                <a asp-controller="Product"
+                                   asp-action="Index"
+                                   asp-route-page="@(Model.CurrentPage - 1)"
+                                   asp-route-category="@Model.Category"
+                                   asp-route-search="@Model.Search"
+                                   asp-route-minPrice="@Model.MinPrice"
+                                   asp-route-maxPrice="@Model.MaxPrice"
+                                   asp-route-sort="@Model.Sort">
+                                    Trước
+                                </a>
+                            }
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <a asp-controller="Product"
+                                   asp-action="Index"
+                                   asp-route-page="@i"
+                                   asp-route-category="@Model.Category"
+                                   asp-route-search="@Model.Search"
+                                   asp-route-minPrice="@Model.MinPrice"
+                                   asp-route-maxPrice="@Model.MaxPrice"
+                                   asp-route-sort="@Model.Sort"
+                                   class="@(Model.CurrentPage == i ? "active" : "")">
+                                    @i
+                                </a>
+                            }
+
+                            @if (Model.CurrentPage < Model.TotalPages)
+                            {
+                                <a asp-controller="Product"
+                                   asp-action="Index"
+                                   asp-route-page="@(Model.CurrentPage + 1)"
+                                   asp-route-category="@Model.Category"
+                                   asp-route-search="@Model.Search"
+                                   asp-route-minPrice="@Model.MinPrice"
+                                   asp-route-maxPrice="@Model.MaxPrice"
+                                   asp-route-sort="@Model.Sort">
+                                    Sau
+                                </a>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
