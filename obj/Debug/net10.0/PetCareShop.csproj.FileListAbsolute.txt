@@ -222,4 +222,4 @@ C:\Users\Admin\Downloads\PetCareShop\bin\Debug\net10.0\runtimes\win-x64\native\M
 C:\Users\Admin\Downloads\PetCareShop\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\Admin\Downloads\PetCareShop\obj\Debug\net10.0\PetCareShop.csproj.AssemblyReference.cache
 C:\Users\Admin\Downloads\PetCareShop\obj\Debug\net10.0\PetCareS.B1BBE5EE.Up2Date
-C:\Users\Admin\Downloads\PetCareShop\obj\Debug\net10.0\compressed\0gc7sqnl7s-{0}-t557bgtwpx-t557bgtwpx.gz
+C:\Users\Admin\Downloads\PetCareShop\obj\Debug\net10.0\compressed\0gc7sqnl7s-{0}-tulxjxx3a1-tulxjxx3a1.gz

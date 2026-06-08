@@ -1,4 +1,3 @@
-wwwroot\css\site.css
 wwwroot\favicon.ico
 wwwroot\images\banners\about-pet.jpg
 wwwroot\images\banners\map-bg.jpg
@@ -80,6 +79,7 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\css\site.css
 C:\Users\Admin\Downloads\PetCareShop\wwwroot\favicon.ico
 C:\Users\Admin\Downloads\PetCareShop\wwwroot\js\site.js
 C:\Users\Admin\Downloads\PetCareShop\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
