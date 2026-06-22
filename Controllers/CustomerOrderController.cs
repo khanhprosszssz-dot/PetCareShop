@@ -1,64 +1,71 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetCareShop.Data;
+using PetCareShop.Models;
+using PetCareShop.Models.Interfaces;
 
 namespace PetCareShop.Controllers
 {
+    [Authorize]
     public class CustomerOrderController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext
+            _context;
 
-        public CustomerOrderController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser>
+            _userManager;
+
+        private readonly IOrderRepository
+            _orderRepository;
+
+        public CustomerOrderController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            IOrderRepository orderRepository)
         {
             _context = context;
+            _userManager = userManager;
+            _orderRepository = orderRepository;
         }
 
-        private bool IsCustomerLoggedIn()
-        {
-            return HttpContext.Session.GetString("CustomerLogin") == "true";
-        }
-
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            if (!IsCustomerLoggedIn())
+            var customer =
+                await GetCurrentCustomerAsync();
+
+            if (customer == null)
             {
-                return RedirectToAction("Login", "CustomerAccount");
+                return View(new List<Order>());
             }
 
-            var customerId = HttpContext.Session.GetInt32("CustomerId");
-
-            if (customerId == null)
-            {
-                return RedirectToAction("Login", "CustomerAccount");
-            }
-
-            var orders = await _context.Orders
-                .Where(x => x.CustomerId == customerId.Value)
-                .OrderByDescending(x => x.OrderDate)
-                .ToListAsync();
+            var orders =
+                await _orderRepository
+                    .GetOrdersByCustomerIdAsync(
+                        customer.Id);
 
             return View(orders);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Detail(int id)
         {
-            if (!IsCustomerLoggedIn())
+            var customer =
+                await GetCurrentCustomerAsync();
+
+            if (customer == null)
             {
-                return RedirectToAction("Login", "CustomerAccount");
+                return NotFound();
             }
 
-            var customerId = HttpContext.Session.GetInt32("CustomerId");
+            var order =
+                await _orderRepository
+                    .GetOrderByIdAsync(id);
 
-            if (customerId == null)
-            {
-                return RedirectToAction("Login", "CustomerAccount");
-            }
-
-            var order = await _context.Orders
-                .Include(x => x.OrderDetails)
-                .FirstOrDefaultAsync(x => x.Id == id && x.CustomerId == customerId.Value);
-
-            if (order == null)
+            if (order == null ||
+                order.CustomerId != customer.Id)
             {
                 return NotFound();
             }
@@ -67,22 +74,23 @@ namespace PetCareShop.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {
-            if (!IsCustomerLoggedIn())
+            var customer =
+                await GetCurrentCustomerAsync();
+
+            if (customer == null)
             {
-                return RedirectToAction("Login", "CustomerAccount");
+                return NotFound();
             }
 
-            var customerId = HttpContext.Session.GetInt32("CustomerId");
-
-            if (customerId == null)
-            {
-                return RedirectToAction("Login", "CustomerAccount");
-            }
-
-            var order = await _context.Orders
-                .FirstOrDefaultAsync(x => x.Id == id && x.CustomerId == customerId.Value);
+            var order =
+                await _context.Orders
+                    .FirstOrDefaultAsync(item =>
+                        item.Id == id &&
+                        item.CustomerId ==
+                        customer.Id);
 
             if (order == null)
             {
@@ -92,10 +100,41 @@ namespace PetCareShop.Controllers
             if (order.Status == "Chờ xác nhận")
             {
                 order.Status = "Đã hủy";
+
                 await _context.SaveChangesAsync();
+
+                TempData["Success"] =
+                    "Hủy đơn hàng thành công.";
+            }
+            else
+            {
+                TempData["Error"] =
+                    "Chỉ có thể hủy đơn đang chờ xác nhận.";
             }
 
-            return RedirectToAction("Detail", new { id = id });
+            return RedirectToAction(
+                nameof(Detail),
+                new { id });
+        }
+
+        private async Task<Customer?>
+            GetCurrentCustomerAsync()
+        {
+            var user =
+                await _userManager.GetUserAsync(User);
+
+            if (user == null ||
+                string.IsNullOrWhiteSpace(user.Email))
+            {
+                return null;
+            }
+
+            string email =
+                user.Email.Trim().ToLower();
+
+            return await _context.Customers
+                .FirstOrDefaultAsync(customer =>
+                    customer.Email == email);
         }
     }
 }

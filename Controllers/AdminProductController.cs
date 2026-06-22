@@ -1,84 +1,83 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PetCareShop.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PetCareShop.Models;
+using PetCareShop.Models.Interfaces;
 
 namespace PetCareShop.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminProductController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IProductRepository _productRepository;
         private readonly IWebHostEnvironment _environment;
 
-        public AdminProductController(ApplicationDbContext context, IWebHostEnvironment environment)
+        public AdminProductController(
+            IProductRepository productRepository,
+            IWebHostEnvironment environment)
         {
-            _context = context;
+            _productRepository = productRepository;
             _environment = environment;
-        }
-
-        private bool IsAdminLoggedIn()
-        {
-            return HttpContext.Session.GetString("AdminLogin") == "true";
         }
 
         public async Task<IActionResult> Index()
         {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
+            var products =
+                await _productRepository.GetAllProductsAsync();
 
-            var products = await _context.Products.ToListAsync();
             return View(products);
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
-
-            return View();
+            return View(new Product());
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Product product)
         {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
-
             if (product.ImageFile != null)
             {
-                product.ImageUrl = await SaveImage(product.ImageFile);
+                try
+                {
+                    product.ImageUrl =
+                        await SaveImageAsync(product.ImageFile);
+                }
+                catch (InvalidOperationException exception)
+                {
+                    ModelState.AddModelError(
+                        nameof(product.ImageFile),
+                        exception.Message);
+                }
             }
 
             if (string.IsNullOrWhiteSpace(product.ImageUrl))
             {
-                ModelState.AddModelError("ImageFile", "Vui lòng chọn ảnh sản phẩm");
+                ModelState.AddModelError(
+                    nameof(product.ImageFile),
+                    "Vui lòng chọn ảnh sản phẩm.");
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Products.Add(product);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Index");
+                return View(product);
             }
 
-            return View(product);
+            await _productRepository.AddProductAsync(product);
+            await _productRepository.SaveChangesAsync();
+
+            TempData["Success"] =
+                "Thêm sản phẩm thành công.";
+
+            return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
-
-            var product = await _context.Products.FindAsync(id);
+            var product =
+                await _productRepository.GetProductByIdAsync(id);
 
             if (product == null)
             {
@@ -89,49 +88,64 @@ namespace PetCareShop.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Product product)
         {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
-
-            var oldProduct = await _context.Products.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == product.Id);
+            var oldProduct =
+                await _productRepository
+                    .GetProductByIdAsNoTrackingAsync(product.Id);
 
             if (oldProduct == null)
             {
                 return NotFound();
             }
 
+            string oldImageUrl = oldProduct.ImageUrl;
+
             if (product.ImageFile != null)
             {
-                product.ImageUrl = await SaveImage(product.ImageFile);
+                try
+                {
+                    product.ImageUrl =
+                        await SaveImageAsync(product.ImageFile);
+                }
+                catch (InvalidOperationException exception)
+                {
+                    ModelState.AddModelError(
+                        nameof(product.ImageFile),
+                        exception.Message);
+                }
             }
             else
             {
-                product.ImageUrl = oldProduct.ImageUrl;
+                product.ImageUrl = oldImageUrl;
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Products.Update(product);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Index");
+                return View(product);
             }
 
-            return View(product);
+            _productRepository.UpdateProduct(product);
+            await _productRepository.SaveChangesAsync();
+
+            if (product.ImageFile != null &&
+                product.ImageUrl != oldImageUrl)
+            {
+                DeleteImage(oldImageUrl);
+            }
+
+            TempData["Success"] =
+                "Cập nhật sản phẩm thành công.";
+
+            return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
-
-            var product = await _context.Products.FindAsync(id);
+            var product =
+                await _productRepository.GetProductByIdAsync(id);
 
             if (product == null)
             {
@@ -142,66 +156,107 @@ namespace PetCareShop.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (!IsAdminLoggedIn())
+            var product =
+                await _productRepository.GetProductByIdAsync(id);
+
+            if (product == null)
             {
-                return RedirectToAction("Login", "AdminAccount");
+                return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            string imageUrl = product.ImageUrl;
 
-            if (product != null)
-            {
-                DeleteImage(product.ImageUrl);
+            _productRepository.DeleteProduct(product);
+            await _productRepository.SaveChangesAsync();
 
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
-            }
+            DeleteImage(imageUrl);
 
-            return RedirectToAction("Index");
+            TempData["Success"] =
+                "Xóa sản phẩm thành công.";
+
+            return RedirectToAction(nameof(Index));
         }
 
-        private async Task<string> SaveImage(IFormFile imageFile)
+        private async Task<string> SaveImageAsync(
+            IFormFile imageFile)
         {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            string[] allowedExtensions =
+            {
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".webp"
+            };
 
-            var extension = Path.GetExtension(imageFile.FileName).ToLower();
+            string extension = Path
+                .GetExtension(imageFile.FileName)
+                .ToLowerInvariant();
 
             if (!allowedExtensions.Contains(extension))
             {
-                throw new Exception("Chỉ cho phép upload ảnh .jpg, .jpeg, .png, .webp");
+                throw new InvalidOperationException(
+                    "Chỉ chấp nhận ảnh JPG, JPEG, PNG hoặc WEBP.");
             }
 
-            var fileName = Guid.NewGuid().ToString() + extension;
+            const long maximumSize = 5 * 1024 * 1024;
 
-            var folderPath = Path.Combine(_environment.WebRootPath, "images", "products");
-
-            if (!Directory.Exists(folderPath))
+            if (imageFile.Length <= 0)
             {
-                Directory.CreateDirectory(folderPath);
+                throw new InvalidOperationException(
+                    "File ảnh không hợp lệ.");
             }
 
-            var filePath = Path.Combine(folderPath, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            if (imageFile.Length > maximumSize)
             {
-                await imageFile.CopyToAsync(stream);
+                throw new InvalidOperationException(
+                    "Ảnh không được vượt quá 5 MB.");
             }
 
-            return "/images/products/" + fileName;
+            string folderPath = Path.Combine(
+                _environment.WebRootPath,
+                "images",
+                "products");
+
+            Directory.CreateDirectory(folderPath);
+
+            string fileName =
+                $"{Guid.NewGuid():N}{extension}";
+
+            string filePath = Path.Combine(
+                folderPath,
+                fileName);
+
+            await using var stream = new FileStream(
+                filePath,
+                FileMode.Create);
+
+            await imageFile.CopyToAsync(stream);
+
+            return $"/images/products/{fileName}";
         }
 
-        private void DeleteImage(string imageUrl)
+        private void DeleteImage(string? imageUrl)
         {
             if (string.IsNullOrWhiteSpace(imageUrl))
             {
                 return;
             }
 
-            var fileName = Path.GetFileName(imageUrl);
+            string fileName = Path.GetFileName(imageUrl);
 
-            var filePath = Path.Combine(_environment.WebRootPath, "images", "products", fileName);
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return;
+            }
+
+            string filePath = Path.Combine(
+                _environment.WebRootPath,
+                "images",
+                "products",
+                fileName);
 
             if (System.IO.File.Exists(filePath))
             {

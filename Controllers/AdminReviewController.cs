@@ -1,70 +1,70 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetCareShop.Data;
 
 namespace PetCareShop.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminReviewController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public AdminReviewController(ApplicationDbContext context)
+        public AdminReviewController(
+            ApplicationDbContext context)
         {
             _context = context;
         }
 
-        private bool IsAdminLoggedIn()
+        public async Task<IActionResult> Index(
+            int? productId,
+            int? rating)
         {
-            return HttpContext.Session.GetString("AdminLogin") == "true";
-        }
-
-        public async Task<IActionResult> Index(int? productId, int? rating)
-        {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
-
-            var query = _context.ProductReviews
-                .Include(x => x.Product)
-                .Include(x => x.Customer)
-                .AsQueryable();
+            var query =
+                _context.ProductReviews
+                    .Include(review => review.Product)
+                    .Include(review => review.Customer)
+                    .AsQueryable();
 
             if (productId.HasValue)
             {
-                query = query.Where(x => x.ProductId == productId.Value);
+                query = query.Where(review =>
+                    review.ProductId ==
+                    productId.Value);
             }
 
             if (rating.HasValue)
             {
-                query = query.Where(x => x.Rating == rating.Value);
+                query = query.Where(review =>
+                    review.Rating == rating.Value);
             }
 
-            ViewBag.Products = await _context.Products
-                .OrderBy(x => x.Name)
-                .ToListAsync();
+            ViewBag.Products =
+                await _context.Products
+                    .OrderBy(product =>
+                        product.Name)
+                    .ToListAsync();
 
             ViewBag.ProductId = productId;
             ViewBag.Rating = rating;
 
-            var reviews = await query
-                .OrderByDescending(x => x.CreatedAt)
-                .ToListAsync();
+            var reviews =
+                await query
+                    .OrderByDescending(review =>
+                        review.CreatedAt)
+                    .ToListAsync();
 
             return View(reviews);
         }
 
         public async Task<IActionResult> Detail(int id)
         {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
-
-            var review = await _context.ProductReviews
-                .Include(x => x.Product)
-                .Include(x => x.Customer)
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var review =
+                await _context.ProductReviews
+                    .Include(item => item.Product)
+                    .Include(item => item.Customer)
+                    .FirstOrDefaultAsync(item =>
+                        item.Id == id);
 
             if (review == null)
             {
@@ -76,15 +76,12 @@ namespace PetCareShop.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
-
-            var review = await _context.ProductReviews
-                .Include(x => x.Product)
-                .Include(x => x.Customer)
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var review =
+                await _context.ProductReviews
+                    .Include(item => item.Product)
+                    .Include(item => item.Customer)
+                    .FirstOrDefaultAsync(item =>
+                        item.Id == id);
 
             if (review == null)
             {
@@ -95,22 +92,22 @@ namespace PetCareShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(
+            int id)
         {
-            if (!IsAdminLoggedIn())
-            {
-                return RedirectToAction("Login", "AdminAccount");
-            }
-
-            var review = await _context.ProductReviews.FindAsync(id);
+            var review =
+                await _context.ProductReviews
+                    .FindAsync(id);
 
             if (review != null)
             {
                 _context.ProductReviews.Remove(review);
+
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

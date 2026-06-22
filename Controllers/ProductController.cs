@@ -1,17 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetCareShop.Data;
 using PetCareShop.Models;
+using PetCareShop.Models.Interfaces;
 
 namespace PetCareShop.Controllers
 {
     public class ProductController : Controller
     {
+        private readonly IProductRepository _productRepository;
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProductController(ApplicationDbContext context)
+        public ProductController(
+            IProductRepository productRepository,
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager)
         {
+            _productRepository = productRepository;
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index(
@@ -22,78 +32,32 @@ namespace PetCareShop.Controllers
             string? sort,
             int page = 1)
         {
-            int pageSize = 6;
+            const int pageSize = 6;
 
             if (page < 1)
             {
                 page = 1;
             }
 
-            var query = _context.Products.AsQueryable();
+            var result =
+                await _productRepository.GetPagedProductsAsync(
+                    category,
+                    search,
+                    minPrice,
+                    maxPrice,
+                    sort,
+                    page,
+                    pageSize);
 
-            if (!string.IsNullOrWhiteSpace(category))
-            {
-                query = query.Where(p => p.Category == category);
-            }
+            int totalPages = (int)Math.Ceiling(
+                result.TotalItems / (double)pageSize);
 
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                query = query.Where(p =>
-                    p.Name.Contains(search) ||
-                    p.Description.Contains(search) ||
-                    p.Category.Contains(search));
-            }
-
-            if (minPrice.HasValue)
-            {
-                query = query.Where(p => p.Price >= minPrice.Value);
-            }
-
-            if (maxPrice.HasValue)
-            {
-                query = query.Where(p => p.Price <= maxPrice.Value);
-            }
-
-            switch (sort)
-            {
-                case "price_asc":
-                    query = query.OrderBy(p => p.Price);
-                    break;
-
-                case "price_desc":
-                    query = query.OrderByDescending(p => p.Price);
-                    break;
-
-                case "name_asc":
-                    query = query.OrderBy(p => p.Name);
-                    break;
-
-                case "name_desc":
-                    query = query.OrderByDescending(p => p.Name);
-                    break;
-
-                default:
-                    query = query.OrderByDescending(p => p.Id);
-                    break;
-            }
-
-            var totalItems = await query.CountAsync();
-
-            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
-
-            var products = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            ViewBag.Categories = await _context.Products
-                .Select(p => p.Category)
-                .Distinct()
-                .ToListAsync();
+            ViewBag.Categories =
+                await _productRepository.GetCategoriesAsync();
 
             var model = new ProductListViewModel
             {
-                Products = products,
+                Products = result.Products,
                 CurrentPage = page,
                 TotalPages = totalPages,
                 Category = category,
@@ -108,8 +72,8 @@ namespace PetCareShop.Controllers
 
         public async Task<IActionResult> Detail(int id)
         {
-            var product = await _context.Products
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var product =
+                await _productRepository.GetProductByIdAsync(id);
 
             if (product == null)
             {
@@ -117,16 +81,16 @@ namespace PetCareShop.Controllers
             }
 
             var reviews = await _context.ProductReviews
-                .Where(x => x.ProductId == id)
-                .OrderByDescending(x => x.CreatedAt)
+                .Where(review => review.ProductId == id)
+                .OrderByDescending(review => review.CreatedAt)
                 .ToListAsync();
 
-            double averageRating = 0;
+            double averageRating = reviews.Count > 0
+                ? reviews.Average(review => review.Rating)
+                : 0;
 
-            if (reviews.Count > 0)
-            {
-                averageRating = reviews.Average(x => x.Rating);
-            }
+            var currentUser =
+                await _userManager.GetUserAsync(User);
 
             var model = new ProductDetailViewModel
             {
@@ -134,26 +98,24 @@ namespace PetCareShop.Controllers
                 Reviews = reviews,
                 AverageRating = averageRating,
                 ReviewCount = reviews.Count,
-                IsCustomerLoggedIn = HttpContext.Session.GetString("CustomerLogin") == "true",
-                CustomerName = HttpContext.Session.GetString("CustomerName")
+                IsCustomerLoggedIn = currentUser != null,
+                CustomerName = currentUser?.FullName
             };
 
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateReview(
             int productId,
             int rating,
             string comment)
         {
-            if (HttpContext.Session.GetString("CustomerLogin") != "true")
-            {
-                TempData["ReviewError"] = "Bạn cần đăng nhập khách hàng để đánh giá sản phẩm.";
-                return RedirectToAction("Detail", new { id = productId });
-            }
-
-            var product = await _context.Products.FindAsync(productId);
+            var product =
+                await _productRepository.GetProductByIdAsync(
+                    productId);
 
             if (product == null)
             {
@@ -162,35 +124,75 @@ namespace PetCareShop.Controllers
 
             if (rating < 1 || rating > 5)
             {
-                TempData["ReviewError"] = "Số sao đánh giá phải từ 1 đến 5.";
-                return RedirectToAction("Detail", new { id = productId });
+                TempData["ReviewError"] =
+                    "Số sao đánh giá phải từ 1 đến 5.";
+
+                return RedirectToAction(
+                    nameof(Detail),
+                    new { id = productId });
             }
 
             if (string.IsNullOrWhiteSpace(comment))
             {
-                TempData["ReviewError"] = "Vui lòng nhập nội dung đánh giá.";
-                return RedirectToAction("Detail", new { id = productId });
+                TempData["ReviewError"] =
+                    "Vui lòng nhập nội dung đánh giá.";
+
+                return RedirectToAction(
+                    nameof(Detail),
+                    new { id = productId });
             }
 
-            var customerId = HttpContext.Session.GetInt32("CustomerId");
-            var customerName = HttpContext.Session.GetString("CustomerName") ?? "Khách hàng";
+            var user =
+                await _userManager.GetUserAsync(User);
+
+            if (user == null ||
+                string.IsNullOrWhiteSpace(user.Email))
+            {
+                return Challenge();
+            }
+
+            string email = user.Email.Trim();
+
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(item =>
+                    item.Email == email);
+
+            if (customer == null)
+            {
+                customer = new Customer
+                {
+                    FullName = user.FullName,
+                    Phone = user.PhoneNumber ?? string.Empty,
+                    Email = email,
+                    Address = user.Address,
+                    CreatedAt = user.CreatedAt
+                };
+
+                _context.Customers.Add(customer);
+
+                await _context.SaveChangesAsync();
+            }
 
             var review = new ProductReview
             {
                 ProductId = productId,
-                CustomerId = customerId,
-                CustomerName = customerName,
+                CustomerId = customer.Id,
+                CustomerName = customer.FullName,
                 Rating = rating,
-                Comment = comment,
+                Comment = comment.Trim(),
                 CreatedAt = DateTime.Now
             };
 
             _context.ProductReviews.Add(review);
+
             await _context.SaveChangesAsync();
 
-            TempData["ReviewSuccess"] = "Cảm ơn bạn đã đánh giá sản phẩm.";
+            TempData["ReviewSuccess"] =
+                "Cảm ơn bạn đã đánh giá sản phẩm.";
 
-            return RedirectToAction("Detail", new { id = productId });
+            return RedirectToAction(
+                nameof(Detail),
+                new { id = productId });
         }
     }
 }

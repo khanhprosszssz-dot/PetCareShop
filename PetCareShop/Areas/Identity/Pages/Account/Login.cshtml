@@ -1,0 +1,138 @@
+﻿@page
+@model global::PetCareShop.Areas.Identity.Pages.Account.LoginModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<link rel="stylesheet"
+      href="~/css/identity.css"
+      asp-append-version="true" />
+
+<section class="identity-page">
+    <div class="identity-container">
+        <div class="identity-card">
+            <aside class="identity-introduction">
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="identity-brand">
+                    PetCare<span>Shop</span>
+                </a>
+
+                <div class="identity-introduction-content">
+                    <span class="identity-eyebrow">
+                        CHÀO MỪNG TRỞ LẠI
+                    </span>
+
+                    <h1>
+                        Đồng hành cùng thú cưng của bạn
+                    </h1>
+
+                    <p>
+                        Đăng nhập để theo dõi đơn hàng, quản lý hồ sơ,
+                        đánh giá sản phẩm và nhận các ưu đãi mới nhất.
+                    </p>
+                </div>
+
+                <ul class="identity-benefits">
+                    <li>
+                        <span class="identity-check">✓</span>
+                        Theo dõi trạng thái đơn hàng
+                    </li>
+
+                    <li>
+                        <span class="identity-check">✓</span>
+                        Quản lý thông tin cá nhân
+                    </li>
+
+                    <li>
+                        <span class="identity-check">✓</span>
+                        Đánh giá sản phẩm đã mua
+                    </li>
+                </ul>
+            </aside>
+
+            <div class="identity-form-panel">
+                <div class="identity-form-header">
+                    <h2>Đăng nhập</h2>
+
+                    <p>
+                        Nhập email và mật khẩu tài khoản của bạn.
+                    </p>
+                </div>
+
+                <form method="post">
+                    <input asp-for="ReturnUrl"
+                           type="hidden" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="identity-validation-summary">
+                    </div>
+
+                    <div class="identity-form-group">
+                        <label asp-for="Input.Email">
+                            Email
+                        </label>
+
+                        <input asp-for="Input.Email"
+                               class="identity-input"
+                               autocomplete="username"
+                               placeholder="Ví dụ: khanh@gmail.com" />
+
+                        <span asp-validation-for="Input.Email"
+                              class="identity-field-error">
+                        </span>
+                    </div>
+
+                    <div class="identity-form-group">
+                        <label asp-for="Input.Password">
+                            Mật khẩu
+                        </label>
+
+                        <input asp-for="Input.Password"
+                               class="identity-input"
+                               autocomplete="current-password"
+                               placeholder="Nhập mật khẩu" />
+
+                        <span asp-validation-for="Input.Password"
+                              class="identity-field-error">
+                        </span>
+                    </div>
+
+                    <div class="identity-options">
+                        <label class="identity-remember">
+                            <input asp-for="Input.RememberMe" />
+                            Ghi nhớ đăng nhập
+                        </label>
+
+                        <a asp-page="./ForgotPassword"
+                           class="identity-link">
+                            Quên mật khẩu?
+                        </a>
+                    </div>
+
+                    <button type="submit"
+                            class="identity-submit">
+                        Đăng nhập
+                        <span>→</span>
+                    </button>
+                </form>
+
+                <p class="identity-switch">
+                    Chưa có tài khoản?
+
+                    <a asp-page="./Register"
+                       asp-route-returnUrl="@Model.ReturnUrl"
+                       class="identity-link">
+                        Đăng ký ngay
+                    </a>
+                </p>
+
+                <div class="identity-security-note">
+                    Mật khẩu được ASP.NET Core Identity bảo vệ
+                    và không lưu dưới dạng văn bản thông thường.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

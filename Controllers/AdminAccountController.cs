@@ -1,45 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PetCareShop.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PetCareShop.Controllers
 {
     public class AdminAccountController : Controller
     {
-        public IActionResult Login()
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Login(
+            string? returnUrl = null)
         {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Login(AdminLogin model)
-        {
-            if (!ModelState.IsValid)
+            if (User.Identity?.IsAuthenticated == true &&
+                User.IsInRole("Admin"))
             {
-                return View(model);
+                return RedirectToAction(
+                    "Index",
+                    "AdminDashboard");
             }
 
-            // Tài khoản admin tạm thời
-            string adminUsername = "admin";
-            string adminPassword = "123456";
+            string destination =
+                "/Identity/Account/Login?returnUrl=" +
+                Uri.EscapeDataString(
+                    returnUrl ?? "/AdminDashboard");
 
-            if (model.Username == adminUsername && model.Password == adminPassword)
-            {
-                HttpContext.Session.SetString("AdminLogin", "true");
-                HttpContext.Session.SetString("AdminName", model.Username);
-
-                return RedirectToAction("Index", "AdminDashboard");
-            }
-
-            ViewBag.Error = "Tài khoản hoặc mật khẩu không đúng.";
-            return View(model);
+            return Redirect(destination);
         }
 
+        [HttpGet]
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("AdminLogin");
-            HttpContext.Session.Remove("AdminName");
-
-            return RedirectToAction("Login");
+            return Redirect(
+                "/Identity/Account/Logout");
         }
     }
 }

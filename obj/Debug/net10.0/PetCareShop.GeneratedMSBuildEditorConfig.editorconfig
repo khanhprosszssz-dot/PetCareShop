@@ -20,133 +20,149 @@ build_property.TargetFrameworkVersion = v10.0
 build_property.EntryPointFilePath = 
 build_property.RootNamespace = PetCareShop
 build_property.RootNamespace = PetCareShop
-build_property.ProjectDir = C:\Users\Admin\Downloads\PetCareShop\
+build_property.ProjectDir = C:\Users\Administrator\Downloads\PetCareShop-main\PetCareShop-main\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 10.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\Admin\Downloads\PetCareShop
+build_property.MSBuildProjectDirectory = C:\Users\Administrator\Downloads\PetCareShop-main\PetCareShop-main
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminAccount/Login.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5BY2NvdW50XExvZ2luLmNzaHRtbA==
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/PetCareShop/Areas/Identity/Pages/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGV0Q2FyZVNob3BcQXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminDashboard/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/PetCareShop/Areas/Identity/Pages/Account/Manage/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGV0Q2FyZVNob3BcQXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxNYW5hZ2VcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/PetCareShop/Areas/Identity/Pages/Account/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGV0Q2FyZVNob3BcQXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/PetCareShop/Areas/Identity/Pages/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGV0Q2FyZVNob3BcQXJlYXNcSWRlbnRpdHlcUGFnZXNcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/PetCareShop/Areas/Identity/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGV0Q2FyZVNob3BcQXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminDashboard/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5EYXNoYm9hcmRcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminOrder/Detail.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminOrder/Detail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5PcmRlclxEZXRhaWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminOrder/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminOrder/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5PcmRlclxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminProduct/Create.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminProduct/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5Qcm9kdWN0XENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminProduct/Delete.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminProduct/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5Qcm9kdWN0XERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminProduct/Edit.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminProduct/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5Qcm9kdWN0XEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminProduct/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminProduct/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5Qcm9kdWN0XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminReview/Delete.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminReview/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5SZXZpZXdcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminReview/Detail.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminReview/Detail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5SZXZpZXdcRGV0YWlsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminReview/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminReview/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5SZXZpZXdcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/AdminStatistic/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/AdminStatistic/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5TdGF0aXN0aWNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Cart/Checkout.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Cart/Checkout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxDaGVja291dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Cart/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Cart/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Cart/Success.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Cart/Success.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxTdWNjZXNzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/CustomerAccount/Login.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJBY2NvdW50XExvZ2luLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/Admin/Downloads/PetCareShop/Views/CustomerAccount/Register.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJBY2NvdW50XFJlZ2lzdGVyLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/Admin/Downloads/PetCareShop/Views/CustomerOrder/Detail.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/CustomerOrder/Detail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJPcmRlclxEZXRhaWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/CustomerOrder/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/CustomerOrder/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJPcmRlclxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/CustomerProfile/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/CustomerProfile/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJQcm9maWxlXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Home/About.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Home/About.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBYm91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Home/Contact.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Home/Contact.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxDb250YWN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Home/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Product/Detail.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Product/Detail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZXRhaWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Product/Index.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Product/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Shared/Error.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Shared/Components/CartCount/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcQ2FydENvdW50XERlZmF1bHQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Shared/_LoginPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/_ViewImports.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/_ViewStart.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Admin/Downloads/PetCareShop/Views/Shared/_Layout.cshtml]
+[C:/Users/Administrator/Downloads/PetCareShop-main/PetCareShop-main/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-7nwomfm7wv

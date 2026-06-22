@@ -1,13 +1,21 @@
-﻿@model List<PetCareShop.Models.CartItem>
+﻿@model List<global::PetCareShop.Models.ShoppingCartItem>
 
 @{
     ViewData["Title"] = "Giỏ hàng";
+
+    decimal total =
+        ViewBag.Total == null
+            ? 0
+            : (decimal)ViewBag.Total;
 }
 
 <section class="page-banner">
     <div class="container">
         <h1>Giỏ hàng của bạn</h1>
-        <p>Kiểm tra sản phẩm trước khi đặt hàng</p>
+
+        <p>
+            Kiểm tra sản phẩm trước khi đặt hàng
+        </p>
     </div>
 </section>
 
@@ -17,10 +25,16 @@
         {
             <div class="empty-cart">
                 <div class="empty-icon">🛒</div>
-                <h2>Giỏ hàng đang trống</h2>
-                <p>Bạn chưa thêm sản phẩm nào vào giỏ hàng.</p>
 
-                <a asp-controller="Product"
+                <h2>Giỏ hàng đang trống</h2>
+
+                <p>
+                    Bạn chưa thêm sản phẩm nào
+                    vào giỏ hàng.
+                </p>
+
+                <a asp-area=""
+                   asp-controller="Product"
                    asp-action="Index"
                    class="btn-primary">
                     Tiếp tục mua hàng
@@ -34,22 +48,33 @@
                     @foreach (var item in Model)
                     {
                         <div class="cart-item">
-                            <img src="@item.ImageUrl" alt="@item.ProductName" />
+                            <img src="@item.Product.ImageUrl"
+                                 alt="@item.Product.Name" />
 
                             <div class="cart-info">
-                                <h3>@item.ProductName</h3>
-                                <p>Đơn giá: @item.Price.ToString("N0") đ</p>
+                                <h3>
+                                    @item.Product.Name
+                                </h3>
 
-                                <div class="cart-quantity">
-                                    <a asp-controller="Cart"
+                                <p>
+                                    Đơn giá:
+                                    @item.Product.Price.ToString("N0") đ
+                                </p>
+
+                                <div class="quantity-box">
+                                    <a asp-area=""
+                                       asp-controller="Cart"
                                        asp-action="Decrease"
                                        asp-route-id="@item.ProductId">
-                                        -
+                                        −
                                     </a>
 
-                                    <span>@item.Quantity</span>
+                                    <span>
+                                        @item.Quantity
+                                    </span>
 
-                                    <a asp-controller="Cart"
+                                    <a asp-area=""
+                                       asp-controller="Cart"
                                        asp-action="Increase"
                                        asp-route-id="@item.ProductId">
                                         +
@@ -58,9 +83,12 @@
                             </div>
 
                             <div class="cart-price">
-                                <strong>@item.Total.ToString("N0") đ</strong>
+                                <strong>
+                                    @item.Total.ToString("N0") đ
+                                </strong>
 
-                                <a asp-controller="Cart"
+                                <a asp-area=""
+                                   asp-controller="Cart"
                                    asp-action="Remove"
                                    asp-route-id="@item.ProductId"
                                    class="remove-btn">
@@ -76,26 +104,35 @@
 
                     <div class="summary-row">
                         <span>Tạm tính</span>
-                        <strong>@ViewBag.Total.ToString("N0") đ</strong>
+
+                        <strong>
+                            @total.ToString("N0") đ
+                        </strong>
                     </div>
 
                     <div class="summary-row">
                         <span>Phí vận chuyển</span>
+
                         <strong>Miễn phí</strong>
                     </div>
 
                     <div class="summary-total">
                         <span>Tổng cộng</span>
-                        <strong>@ViewBag.Total.ToString("N0") đ</strong>
+
+                        <strong>
+                            @total.ToString("N0") đ
+                        </strong>
                     </div>
 
-                    <a asp-controller="Cart"
+                    <a asp-area=""
+                       asp-controller="Cart"
                        asp-action="Checkout"
                        class="checkout-btn">
                         Tiến hành đặt hàng
                     </a>
 
-                    <a asp-controller="Cart"
+                    <a asp-area=""
+                       asp-controller="Cart"
                        asp-action="Clear"
                        class="clear-btn">
                         Xóa toàn bộ giỏ hàng

@@ -1,0 +1,190 @@
+﻿/* =========================================
+   DROPDOWN MENU DỄ SỬ DỤNG
+   ========================================= */
+
+.nav-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 76px;
+}
+
+    /*
+    Vùng cầu nối vô hình giữa nút và menu.
+    Giúp rê chuột xuống menu không bị đóng.
+*/
+    .nav-dropdown::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 240px;
+        height: 18px;
+        z-index: 201;
+    }
+
+/* Nút Tài khoản hoặc Quản trị */
+
+.dropdown-btn {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 8px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #334155;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+    .dropdown-btn:hover,
+    .dropdown-btn:focus-visible {
+        color: #f97316;
+    }
+
+    .dropdown-btn:focus-visible {
+        border-radius: 10px;
+        background: #fff7ed;
+    }
+
+/* Mũi tên */
+
+.dropdown-arrow {
+    display: inline-block;
+    font-size: 9px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+/* Tên khách hàng quá dài sẽ được rút gọn */
+
+.account-btn-nav {
+    max-width: 170px;
+}
+
+    .account-btn-nav > span:first-child {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+/* Hộp menu */
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 220;
+    display: block;
+    min-width: 230px;
+    padding: 11px;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 20px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16), 0 4px 12px rgba(15, 23, 42, 0.06);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+/* Hiện khi rê chuột, dùng bàn phím hoặc bấm chuột */
+
+.nav-dropdown:hover .dropdown-menu,
+.nav-dropdown:focus-within .dropdown-menu,
+.nav-dropdown.is-open .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* Xoay mũi tên khi menu mở */
+
+.nav-dropdown:hover .dropdown-arrow,
+.nav-dropdown:focus-within .dropdown-arrow,
+.nav-dropdown.is-open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* Các liên kết bên trong dropdown */
+
+.dropdown-menu a {
+    width: 100%;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 13px 15px;
+    border-radius: 13px;
+    color: #334155;
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+    .dropdown-menu a:hover,
+    .dropdown-menu a:focus-visible {
+        color: #f97316;
+        background: #fff1e8;
+        transform: translateX(3px);
+    }
+
+    .dropdown-menu a:focus-visible {
+        outline: 2px solid rgba(249, 115, 22, 0.35);
+        outline-offset: 1px;
+    }
+
+/* Nút đăng xuất */
+
+.dropdown-menu .dropdown-logout {
+    margin-top: 5px;
+    border-top: 1px solid #f1f5f9;
+    color: #dc2626;
+}
+
+    .dropdown-menu .dropdown-logout:hover {
+        color: #ffffff;
+        background: #dc2626;
+    }
+
+/* Tablet */
+
+@media (max-width: 992px) {
+    .nav-dropdown {
+        min-height: 48px;
+    }
+
+    .dropdown-btn {
+        min-height: 44px;
+    }
+}
+
+/* Điện thoại */
+
+@media (max-width: 768px) {
+    .nav-dropdown::after {
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    .dropdown-menu {
+        left: 50%;
+        right: auto;
+        min-width: 220px;
+        transform: translate(-50%, -8px);
+    }
+
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu,
+    .nav-dropdown.is-open .dropdown-menu {
+        transform: translate(-50%, 0);
+    }
+}

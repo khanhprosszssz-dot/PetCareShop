@@ -1,116 +1,233 @@
-﻿@using PetCareShop.Extensions
-@using Microsoft.AspNetCore.Http
+﻿@using global::PetCareShop.Extensions
+@using global::PetCareShop.Data
+@using global::Microsoft.AspNetCore.Identity
+
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ApplicationUser? currentUser = null;
+
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        currentUser = await UserManager.GetUserAsync(User);
+    }
+
+    string displayName =
+        currentUser?.FullName
+        ?? User.Identity?.Name
+        ?? "Tài khoản";
+}
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
     <title>@ViewData["Title"] - PetCare Shop</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/dropdown.css"
+          asp-append-version="true" />
 </head>
-<body>
 
+<body>
     <header class="main-header">
         <div class="container header-inner">
-            <a asp-controller="Home" asp-action="Index" class="logo">
+            <a asp-area=""
+               asp-controller="Home"
+               asp-action="Index"
+               class="logo">
                 PetCare<span>Shop</span>
             </a>
 
             <nav class="main-nav">
-                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
-                <a asp-controller="Product" asp-action="Index">Sản phẩm</a>
-                <a asp-controller="Home" asp-action="About">Giới thiệu</a>
-                <a asp-controller="Home" asp-action="Contact">Liên hệ</a>
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">
+                    Trang chủ
+                </a>
 
-                @if (Context.Session.GetString("AdminLogin") == "true")
+                <a asp-area=""
+                   asp-controller="Product"
+                   asp-action="Index">
+                    Sản phẩm
+                </a>
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="About">
+                    Giới thiệu
+                </a>
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Contact">
+                    Liên hệ
+                </a>
+
+                @if (User.Identity?.IsAuthenticated == true &&
+                     User.IsInRole("Admin"))
                 {
-                    <div class="nav-dropdown">
-                        <button type="button" class="dropdown-btn">
-                            Quản trị ▾
+                    <div class="nav-dropdown js-dropdown">
+                        <button type="button"
+                                class="dropdown-btn js-dropdown-button"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+
+                            <span>Quản trị</span>
+
+                            <span class="dropdown-arrow">
+                                ▼
+                            </span>
                         </button>
 
                         <div class="dropdown-menu">
-                            <a asp-controller="AdminDashboard" asp-action="Index">
+                            <a asp-area=""
+                               asp-controller="AdminDashboard"
+                               asp-action="Index">
                                 Dashboard
                             </a>
 
-                            <a asp-controller="AdminProduct" asp-action="Index">
+                            <a asp-area=""
+                               asp-controller="AdminProduct"
+                               asp-action="Index">
                                 Quản lý sản phẩm
                             </a>
 
-                            <a asp-controller="AdminOrder" asp-action="Index">
+                            <a asp-area=""
+                               asp-controller="AdminOrder"
+                               asp-action="Index">
                                 Quản lý đơn hàng
                             </a>
 
-                            <a asp-controller="AdminReview" asp-action="Index">
+                            <a asp-area=""
+                               asp-controller="AdminReview"
+                               asp-action="Index">
                                 Quản lý đánh giá
                             </a>
 
-                            <a asp-controller="AdminStatistic" asp-action="Index">
+                            <a asp-area=""
+                               asp-controller="AdminStatistic"
+                               asp-action="Index">
                                 Thống kê doanh thu
                             </a>
+                        </div>
+                    </div>
+                }
+                else if (User.Identity?.IsAuthenticated != true)
+                {
+                    <a asp-area="Identity"
+                       asp-page="/Account/Login"
+                       asp-route-returnUrl="/AdminDashboard">
+                        Admin
+                    </a>
+                }
 
-                            <a asp-controller="AdminAccount" asp-action="Logout">
-                                Đăng xuất Admin
-                            </a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="nav-dropdown js-dropdown">
+                        <button type="button"
+                                class="dropdown-btn account-btn-nav js-dropdown-button"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+
+                            <span>@displayName</span>
+
+                            <span class="dropdown-arrow">
+                                ▼
+                            </span>
+                        </button>
+
+                        <div class="dropdown-menu">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-area=""
+                                   asp-controller="AdminDashboard"
+                                   asp-action="Index">
+                                    Trang quản trị
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-area=""
+                                   asp-controller="CustomerProfile"
+                                   asp-action="Index">
+                                    Hồ sơ cá nhân
+                                </a>
+
+                                <a asp-area=""
+                                   asp-controller="CustomerOrder"
+                                   asp-action="Index">
+                                    Đơn hàng của tôi
+                                </a>
+
+                                <a asp-area=""
+                                   asp-controller="Product"
+                                   asp-action="Index">
+                                    Tiếp tục mua hàng
+                                </a>
+                            }
+
+                            <form asp-area="Identity"
+                                  asp-page="/Account/Logout"
+                                  asp-route-returnUrl="/"
+                                  method="post"
+                                  class="dropdown-logout-form">
+
+                                <button type="submit"
+                                        class="dropdown-link-button">
+                                    Đăng xuất
+                                </button>
+                            </form>
                         </div>
                     </div>
                 }
                 else
                 {
-                    <a asp-controller="AdminAccount" asp-action="Login">Admin</a>
-                }
+                    <div class="nav-dropdown js-dropdown">
+                        <button type="button"
+                                class="dropdown-btn js-dropdown-button"
+                                aria-haspopup="true"
+                                aria-expanded="false">
 
-                @if (Context.Session.GetString("CustomerLogin") == "true")
-                {
-                    <div class="nav-dropdown">
-                        <button type="button" class="dropdown-btn account-btn-nav">
-                            @Context.Session.GetString("CustomerName") ▾
+                            <span>Tài khoản</span>
+
+                            <span class="dropdown-arrow">
+                                ▼
+                            </span>
                         </button>
 
                         <div class="dropdown-menu">
-                            <a asp-controller="CustomerProfile" asp-action="Index">
-                                Hồ sơ cá nhân
-                            </a>
-
-                            <a asp-controller="CustomerOrder" asp-action="Index">
-                                Đơn hàng của tôi
-                            </a>
-
-                            <a asp-controller="Product" asp-action="Index">
-                                Tiếp tục mua hàng
-                            </a>
-
-                            <a asp-controller="CustomerAccount" asp-action="Logout">
-                                Đăng xuất
-                            </a>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <div class="nav-dropdown">
-                        <button type="button" class="dropdown-btn">
-                            Tài khoản ▾
-                        </button>
-
-                        <div class="dropdown-menu">
-                            <a asp-controller="CustomerAccount" asp-action="Login">
+                            <a asp-area="Identity"
+                               asp-page="/Account/Login">
                                 Đăng nhập
                             </a>
 
-                            <a asp-controller="CustomerAccount" asp-action="Register">
+                            <a asp-area="Identity"
+                               asp-page="/Account/Register">
                                 Đăng ký
                             </a>
                         </div>
                     </div>
                 }
 
-                <a asp-controller="Cart" asp-action="Index" class="cart-link">
+                <a asp-area=""
+                   asp-controller="Cart"
+                   asp-action="Index"
+                   class="cart-link">
+
                     Giỏ hàng
-                    <span class="cart-count">@CartHelper.GetCartCount(Context.Session)</span>
+
+                    <span class="cart-count">
+                        @await Component.InvokeAsync("CartCount")
+                    </span>
                 </a>
             </nav>
         </div>
@@ -124,33 +241,83 @@
         <div class="container footer-grid">
             <div>
                 <h3>PetCare Shop</h3>
+
                 <p>
-                    Shop thú cưng chuyên nghiệp, cung cấp chó mèo, phụ kiện,
-                    thức ăn và dịch vụ chăm sóc thú cưng.
+                    Cửa hàng cung cấp thú cưng, thức ăn,
+                    phụ kiện và dịch vụ chăm sóc chuyên nghiệp.
                 </p>
             </div>
 
             <div>
                 <h4>Liên kết</h4>
-                <a asp-controller="Home" asp-action="Index">Trang chủ</a>
-                <a asp-controller="Product" asp-action="Index">Sản phẩm</a>
-                <a asp-controller="Home" asp-action="About">Giới thiệu</a>
-                <a asp-controller="Home" asp-action="Contact">Liên hệ</a>
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">
+                    Trang chủ
+                </a>
+
+                <a asp-area=""
+                   asp-controller="Product"
+                   asp-action="Index">
+                    Sản phẩm
+                </a>
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="About">
+                    Giới thiệu
+                </a>
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Contact">
+                    Liên hệ
+                </a>
             </div>
 
             <div>
                 <h4>Tài khoản</h4>
 
-                @if (Context.Session.GetString("CustomerLogin") == "true")
+                @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <a asp-controller="CustomerProfile" asp-action="Index">Hồ sơ cá nhân</a>
-                    <a asp-controller="CustomerOrder" asp-action="Index">Đơn hàng của tôi</a>
-                    <a asp-controller="CustomerAccount" asp-action="Logout">Đăng xuất</a>
+                    @if (!User.IsInRole("Admin"))
+                    {
+                        <a asp-area=""
+                           asp-controller="CustomerProfile"
+                           asp-action="Index">
+                            Hồ sơ cá nhân
+                        </a>
+
+                        <a asp-area=""
+                           asp-controller="CustomerOrder"
+                           asp-action="Index">
+                            Đơn hàng của tôi
+                        </a>
+                    }
+
+                    <form asp-area="Identity"
+                          asp-page="/Account/Logout"
+                          asp-route-returnUrl="/"
+                          method="post">
+
+                        <button type="submit"
+                                class="footer-logout-button">
+                            Đăng xuất
+                        </button>
+                    </form>
                 }
                 else
                 {
-                    <a asp-controller="CustomerAccount" asp-action="Login">Đăng nhập</a>
-                    <a asp-controller="CustomerAccount" asp-action="Register">Đăng ký</a>
+                    <a asp-area="Identity"
+                       asp-page="/Account/Login">
+                        Đăng nhập
+                    </a>
+
+                    <a asp-area="Identity"
+                       asp-page="/Account/Register">
+                        Đăng ký
+                    </a>
                 }
 
                 <p>Hotline: 0909 999 999</p>
@@ -160,10 +327,16 @@
         </div>
 
         <div class="copyright">
-            © 2026 PetCare Shop. All rights reserved.
+            © @DateTime.Now.Year PetCare Shop. All rights reserved.
         </div>
     </footer>
 
-    @RenderSection("Scripts", required: false)
+    <script src="~/js/site.js"
+            asp-append-version="true">
+    </script>
+
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false)
 </body>
 </html>

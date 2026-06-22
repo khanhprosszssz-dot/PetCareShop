@@ -190,3 +190,4 @@ namespace PetCareShop.Migrations
         }
     }
 }
+

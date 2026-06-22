@@ -1,227 +1,290 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetCareShop.Data;
-using PetCareShop.Extensions;
 using PetCareShop.Models;
+using PetCareShop.Models.Interfaces;
 
 namespace PetCareShop.Controllers
 {
     public class CartController : Controller
     {
-        private const string CartSessionKey = "CART";
-        private readonly ApplicationDbContext _context;
+        private readonly IShoppingCartRepository
+            _shoppingCartRepository;
 
-        public CartController(ApplicationDbContext context)
+        private readonly IProductRepository
+            _productRepository;
+
+        private readonly IOrderRepository
+            _orderRepository;
+
+        private readonly ApplicationDbContext
+            _context;
+
+        private readonly UserManager<ApplicationUser>
+            _userManager;
+
+        public CartController(
+            IShoppingCartRepository shoppingCartRepository,
+            IProductRepository productRepository,
+            IOrderRepository orderRepository,
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager)
         {
+            _shoppingCartRepository =
+                shoppingCartRepository;
+
+            _productRepository =
+                productRepository;
+
+            _orderRepository =
+                orderRepository;
+
             _context = context;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            var cart = GetCart();
+            var cartItems =
+                await _shoppingCartRepository
+                    .GetAllShoppingCartItemsAsync();
 
-            ViewBag.Total = cart.Sum(x => x.Total);
+            ViewBag.Total =
+                await _shoppingCartRepository
+                    .GetShoppingCartTotalAsync();
 
-            return View(cart);
+            return View(cartItems);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Add(int id)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            var product =
+                await _productRepository
+                    .GetProductByIdAsync(id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            var cart = GetCart();
+            await _shoppingCartRepository
+                .AddToCartAsync(product);
 
-            var item = cart.FirstOrDefault(x => x.ProductId == id);
-
-            if (item == null)
-            {
-                cart.Add(new CartItem
-                {
-                    ProductId = product.Id,
-                    ProductName = product.Name,
-                    ImageUrl = product.ImageUrl,
-                    Price = product.Price,
-                    Quantity = 1
-                });
-            }
-            else
-            {
-                item.Quantity++;
-            }
-
-            SaveCart(cart);
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Increase(int id)
+        [HttpGet]
+        public async Task<IActionResult> Increase(int id)
         {
-            var cart = GetCart();
+            await _shoppingCartRepository
+                .IncreaseQuantityAsync(id);
 
-            var item = cart.FirstOrDefault(x => x.ProductId == id);
-
-            if (item != null)
-            {
-                item.Quantity++;
-            }
-
-            SaveCart(cart);
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Decrease(int id)
+        [HttpGet]
+        public async Task<IActionResult> Decrease(int id)
         {
-            var cart = GetCart();
+            await _shoppingCartRepository
+                .DecreaseQuantityAsync(id);
 
-            var item = cart.FirstOrDefault(x => x.ProductId == id);
-
-            if (item != null)
-            {
-                item.Quantity--;
-
-                if (item.Quantity <= 0)
-                {
-                    cart.Remove(item);
-                }
-            }
-
-            SaveCart(cart);
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Remove(int id)
+        [HttpGet]
+        public async Task<IActionResult> Remove(int id)
         {
-            var cart = GetCart();
+            await _shoppingCartRepository
+                .RemoveFromCartAsync(id);
 
-            var item = cart.FirstOrDefault(x => x.ProductId == id);
-
-            if (item != null)
-            {
-                cart.Remove(item);
-            }
-
-            SaveCart(cart);
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Clear()
+        [HttpGet]
+        public async Task<IActionResult> Clear()
         {
-            SaveCart(new List<CartItem>());
+            await _shoppingCartRepository
+                .ClearCartAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Checkout()
         {
-            var cart = GetCart();
+            var cartItems =
+                await _shoppingCartRepository
+                    .GetAllShoppingCartItemsAsync();
 
-            if (cart.Count == 0)
+            if (cartItems.Count == 0)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
-            var customerId = HttpContext.Session.GetInt32("CustomerId");
+            var user =
+                await _userManager.GetUserAsync(User);
 
-            if (customerId != null)
+            if (user == null)
             {
-                var customer = await _context.Customers.FindAsync(customerId.Value);
-
-                if (customer != null)
-                {
-                    ViewBag.FullName = customer.FullName;
-                    ViewBag.Phone = customer.Phone;
-                    ViewBag.Email = customer.Email;
-                    ViewBag.Address = customer.Address;
-                }
+                return Challenge();
             }
 
-            ViewBag.Total = cart.Sum(x => x.Total);
+            var customer =
+                await GetOrCreateCustomerAsync(user);
 
-            return View(cart);
+            ViewBag.FullName = customer.FullName;
+            ViewBag.Phone = customer.Phone;
+            ViewBag.Email = customer.Email;
+            ViewBag.Address = customer.Address;
+
+            ViewBag.Total =
+                await _shoppingCartRepository
+                    .GetShoppingCartTotalAsync();
+
+            return View(cartItems);
         }
 
+        [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmOrder(
             string FullName,
             string Phone,
-            string Email,
+            string? Email,
             string Address,
-            string Note)
+            string? Note)
         {
-            var cart = GetCart();
+            var cartItems =
+                await _shoppingCartRepository
+                    .GetAllShoppingCartItemsAsync();
 
-            if (cart.Count == 0)
+            if (cartItems.Count == 0)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             if (string.IsNullOrWhiteSpace(FullName) ||
                 string.IsNullOrWhiteSpace(Phone) ||
                 string.IsNullOrWhiteSpace(Address))
             {
-                TempData["Error"] = "Vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ nhận hàng.";
-                return RedirectToAction("Checkout");
+                TempData["Error"] =
+                    "Vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ.";
+
+                return RedirectToAction(nameof(Checkout));
             }
+
+            var user =
+                await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return Challenge();
+            }
+
+            var customer =
+                await GetOrCreateCustomerAsync(user);
 
             var order = new Order
             {
-                CustomerId = HttpContext.Session.GetInt32("CustomerId"),
-                FullName = FullName,
-                Phone = Phone,
-                Email = Email ?? "",
-                Address = Address,
-                Note = Note ?? "",
-                OrderDate = DateTime.Now,
-                Status = "Chờ xác nhận",
-                TotalAmount = cart.Sum(x => x.Total),
-                OrderDetails = cart.Select(x => new OrderDetail
-                {
-                    ProductId = x.ProductId,
-                    ProductName = x.ProductName,
-                    ImageUrl = x.ImageUrl,
-                    Price = x.Price,
-                    Quantity = x.Quantity
-                }).ToList()
+                CustomerId = customer.Id,
+
+                FullName = FullName.Trim(),
+
+                Phone = Phone.Trim(),
+
+                Email = Email?.Trim()
+                    ?? user.Email
+                    ?? string.Empty,
+
+                Address = Address.Trim(),
+
+                Note = Note?.Trim()
+                    ?? string.Empty
             };
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            try
+            {
+                order =
+                    await _orderRepository
+                        .PlaceOrderAsync(order);
+            }
+            catch (InvalidOperationException exception)
+            {
+                TempData["Error"] =
+                    exception.Message;
 
-            SaveCart(new List<CartItem>());
+                return RedirectToAction(nameof(Index));
+            }
 
             TempData["OrderId"] = order.Id;
 
-            return RedirectToAction("Success");
+            return RedirectToAction(nameof(Success));
         }
 
+        [HttpGet]
         public IActionResult Success()
         {
             return View();
         }
 
-        private List<CartItem> GetCart()
+        private async Task<Customer>
+            GetOrCreateCustomerAsync(
+                ApplicationUser user)
         {
-            var cart = HttpContext.Session.GetObject<List<CartItem>>(CartSessionKey);
-
-            if (cart == null)
+            if (string.IsNullOrWhiteSpace(user.Email))
             {
-                cart = new List<CartItem>();
+                throw new InvalidOperationException(
+                    "Tài khoản chưa có email.");
             }
 
-            return cart;
-        }
+            string email =
+                user.Email.Trim().ToLower();
 
-        private void SaveCart(List<CartItem> cart)
-        {
-            HttpContext.Session.SetObject(CartSessionKey, cart);
+            var customer =
+                await _context.Customers
+                    .FirstOrDefaultAsync(item =>
+                        item.Email == email);
+
+            if (customer == null)
+            {
+                customer = new Customer
+                {
+                    FullName = user.FullName,
+
+                    Phone =
+                        user.PhoneNumber
+                        ?? string.Empty,
+
+                    Email = email,
+
+                    Address = user.Address,
+
+                    CreatedAt = user.CreatedAt
+                };
+
+                _context.Customers.Add(customer);
+            }
+            else
+            {
+                customer.FullName =
+                    user.FullName;
+
+                customer.Phone =
+                    user.PhoneNumber
+                    ?? customer.Phone;
+
+                customer.Address =
+                    user.Address;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return customer;
         }
     }
 }

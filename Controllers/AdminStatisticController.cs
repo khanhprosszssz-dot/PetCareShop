@@ -1,100 +1,161 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetCareShop.Data;
 
 namespace PetCareShop.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminStatisticController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public AdminStatisticController(ApplicationDbContext context)
+        public AdminStatisticController(
+            ApplicationDbContext context)
         {
             _context = context;
         }
 
-        private bool IsAdminLoggedIn()
+        public async Task<IActionResult> Index(
+            int? month,
+            int? year)
         {
-            return HttpContext.Session.GetString("AdminLogin") == "true";
-        }
+            DateTime now = DateTime.Now;
 
-        public async Task<IActionResult> Index(int? month, int? year)
-        {
-            if (!IsAdminLoggedIn())
+            int selectedMonth =
+                month ?? now.Month;
+
+            int selectedYear =
+                year ?? now.Year;
+
+            if (selectedMonth < 1 ||
+                selectedMonth > 12)
             {
-                return RedirectToAction("Login", "AdminAccount");
+                selectedMonth = now.Month;
             }
 
-            var now = DateTime.Now;
-
-            int selectedMonth = month ?? now.Month;
-            int selectedYear = year ?? now.Year;
-
-            var today = DateTime.Today;
-            var tomorrow = today.AddDays(1);
-
-            var firstDayOfMonth = new DateTime(selectedYear, selectedMonth, 1);
-            var firstDayOfNextMonth = firstDayOfMonth.AddMonths(1);
-
-            ViewBag.SelectedMonth = selectedMonth;
-            ViewBag.SelectedYear = selectedYear;
-
-            ViewBag.TodayRevenue = await _context.Orders
-                .Where(x => x.Status != "Đã hủy"
-                    && x.OrderDate >= today
-                    && x.OrderDate < tomorrow)
-                .Select(x => (decimal?)x.TotalAmount)
-                .SumAsync() ?? 0;
-
-            ViewBag.MonthRevenue = await _context.Orders
-                .Where(x => x.Status != "Đã hủy"
-                    && x.OrderDate >= firstDayOfMonth
-                    && x.OrderDate < firstDayOfNextMonth)
-                .Select(x => (decimal?)x.TotalAmount)
-                .SumAsync() ?? 0;
-
-            ViewBag.TotalCompletedOrders = await _context.Orders
-                .CountAsync(x => x.Status == "Hoàn thành");
-
-            ViewBag.TotalCancelledOrders = await _context.Orders
-                .CountAsync(x => x.Status == "Đã hủy");
-
-            ViewBag.TotalOrdersInMonth = await _context.Orders
-                .CountAsync(x => x.OrderDate >= firstDayOfMonth
-                    && x.OrderDate < firstDayOfNextMonth);
-
-            var ordersInMonth = await _context.Orders
-                .Where(x => x.OrderDate >= firstDayOfMonth
-                    && x.OrderDate < firstDayOfNextMonth)
-                .ToListAsync();
-
-            var daysInMonth = DateTime.DaysInMonth(selectedYear, selectedMonth);
-
-            var dailyStats = new List<DailyRevenueViewModel>();
-
-            for (int day = 1; day <= daysInMonth; day++)
+            if (selectedYear < 2000 ||
+                selectedYear > 2100)
             {
-                var date = new DateTime(selectedYear, selectedMonth, day);
+                selectedYear = now.Year;
+            }
 
-                var ordersOfDay = ordersInMonth
-                    .Where(x => x.OrderDate.Date == date.Date)
-                    .ToList();
+            DateTime today =
+                DateTime.Today;
 
-                var revenue = ordersOfDay
-                    .Where(x => x.Status != "Đã hủy")
-                    .Sum(x => x.TotalAmount);
+            DateTime tomorrow =
+                today.AddDays(1);
 
-                var orderCount = ordersOfDay.Count;
+            DateTime firstDayOfMonth =
+                new DateTime(
+                    selectedYear,
+                    selectedMonth,
+                    1);
 
-                var cancelledCount = ordersOfDay.Count(x => x.Status == "Đã hủy");
+            DateTime firstDayOfNextMonth =
+                firstDayOfMonth.AddMonths(1);
 
-                dailyStats.Add(new DailyRevenueViewModel
-                {
-                    Date = date,
-                    Revenue = revenue,
-                    OrderCount = orderCount,
-                    CancelledCount = cancelledCount
-                });
+            ViewBag.SelectedMonth =
+                selectedMonth;
+
+            ViewBag.SelectedYear =
+                selectedYear;
+
+            ViewBag.TodayRevenue =
+                await _context.Orders
+                    .Where(order =>
+                        order.Status != "Đã hủy" &&
+                        order.OrderDate >= today &&
+                        order.OrderDate < tomorrow)
+                    .Select(order =>
+                        (decimal?)order.TotalAmount)
+                    .SumAsync() ?? 0;
+
+            ViewBag.MonthRevenue =
+                await _context.Orders
+                    .Where(order =>
+                        order.Status != "Đã hủy" &&
+                        order.OrderDate >=
+                        firstDayOfMonth &&
+                        order.OrderDate <
+                        firstDayOfNextMonth)
+                    .Select(order =>
+                        (decimal?)order.TotalAmount)
+                    .SumAsync() ?? 0;
+
+            ViewBag.TotalCompletedOrders =
+                await _context.Orders.CountAsync(
+                    order =>
+                        order.Status == "Hoàn thành");
+
+            ViewBag.TotalCancelledOrders =
+                await _context.Orders.CountAsync(
+                    order =>
+                        order.Status == "Đã hủy");
+
+            ViewBag.TotalOrdersInMonth =
+                await _context.Orders.CountAsync(
+                    order =>
+                        order.OrderDate >=
+                        firstDayOfMonth &&
+                        order.OrderDate <
+                        firstDayOfNextMonth);
+
+            var ordersInMonth =
+                await _context.Orders
+                    .Where(order =>
+                        order.OrderDate >=
+                        firstDayOfMonth &&
+                        order.OrderDate <
+                        firstDayOfNextMonth)
+                    .ToListAsync();
+
+            int daysInMonth =
+                DateTime.DaysInMonth(
+                    selectedYear,
+                    selectedMonth);
+
+            var dailyStats =
+                new List<DailyRevenueViewModel>();
+
+            for (int day = 1;
+                 day <= daysInMonth;
+                 day++)
+            {
+                DateTime date =
+                    new DateTime(
+                        selectedYear,
+                        selectedMonth,
+                        day);
+
+                var ordersOfDay =
+                    ordersInMonth
+                        .Where(order =>
+                            order.OrderDate.Date ==
+                            date.Date)
+                        .ToList();
+
+                decimal revenue =
+                    ordersOfDay
+                        .Where(order =>
+                            order.Status != "Đã hủy")
+                        .Sum(order =>
+                            order.TotalAmount);
+
+                dailyStats.Add(
+                    new DailyRevenueViewModel
+                    {
+                        Date = date,
+                        Revenue = revenue,
+                        OrderCount =
+                            ordersOfDay.Count,
+
+                        CancelledCount =
+                            ordersOfDay.Count(
+                                order =>
+                                    order.Status ==
+                                    "Đã hủy")
+                    });
             }
 
             return View(dailyStats);

@@ -1,0 +1,188 @@
+﻿@page
+@model global::PetCareShop.Areas.Identity.Pages.Account.RegisterModel
+
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<link rel="stylesheet"
+      href="~/css/identity.css"
+      asp-append-version="true" />
+
+<section class="identity-page">
+    <div class="identity-container">
+        <div class="identity-card">
+            <aside class="identity-introduction">
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="identity-brand">
+                    PetCare<span>Shop</span>
+                </a>
+
+                <div class="identity-introduction-content">
+                    <span class="identity-eyebrow">
+                        THÀNH VIÊN MỚI
+                    </span>
+
+                    <h1>
+                        Tạo tài khoản PetCare Shop
+                    </h1>
+
+                    <p>
+                        Đăng ký tài khoản miễn phí để mua sắm,
+                        theo dõi đơn hàng và chăm sóc thú cưng thuận tiện hơn.
+                    </p>
+                </div>
+
+                <ul class="identity-benefits">
+                    <li>
+                        <span class="identity-check">✓</span>
+                        Đăng ký nhanh chóng
+                    </li>
+
+                    <li>
+                        <span class="identity-check">✓</span>
+                        Bảo mật bằng Identity
+                    </li>
+
+                    <li>
+                        <span class="identity-check">✓</span>
+                        Quản lý đơn hàng dễ dàng
+                    </li>
+                </ul>
+            </aside>
+
+            <div class="identity-form-panel">
+                <div class="identity-form-header">
+                    <h2>Đăng ký tài khoản</h2>
+
+                    <p>
+                        Điền đầy đủ thông tin để bắt đầu mua sắm.
+                    </p>
+                </div>
+
+                <form method="post">
+                    <input asp-for="ReturnUrl"
+                           type="hidden" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="identity-validation-summary">
+                    </div>
+
+                    <div class="identity-form-grid">
+                        <div class="identity-form-group full-width">
+                            <label asp-for="Input.FullName">
+                                Họ và tên
+                            </label>
+
+                            <input asp-for="Input.FullName"
+                                   class="identity-input"
+                                   autocomplete="name"
+                                   placeholder="Nhập họ và tên" />
+
+                            <span asp-validation-for="Input.FullName"
+                                  class="identity-field-error">
+                            </span>
+                        </div>
+
+                        <div class="identity-form-group">
+                            <label asp-for="Input.PhoneNumber">
+                                Số điện thoại
+                            </label>
+
+                            <input asp-for="Input.PhoneNumber"
+                                   class="identity-input"
+                                   autocomplete="tel"
+                                   placeholder="Nhập số điện thoại" />
+
+                            <span asp-validation-for="Input.PhoneNumber"
+                                  class="identity-field-error">
+                            </span>
+                        </div>
+
+                        <div class="identity-form-group">
+                            <label asp-for="Input.Email">
+                                Email
+                            </label>
+
+                            <input asp-for="Input.Email"
+                                   class="identity-input"
+                                   autocomplete="username"
+                                   placeholder="Nhập email" />
+
+                            <span asp-validation-for="Input.Email"
+                                  class="identity-field-error">
+                            </span>
+                        </div>
+
+                        <div class="identity-form-group full-width">
+                            <label asp-for="Input.Address">
+                                Địa chỉ
+                            </label>
+
+                            <textarea asp-for="Input.Address"
+                                      class="identity-input"
+                                      autocomplete="street-address"
+                                      placeholder="Nhập địa chỉ nhận hàng"></textarea>
+
+                            <span asp-validation-for="Input.Address"
+                                  class="identity-field-error">
+                            </span>
+                        </div>
+
+                        <div class="identity-form-group">
+                            <label asp-for="Input.Password">
+                                Mật khẩu
+                            </label>
+
+                            <input asp-for="Input.Password"
+                                   class="identity-input"
+                                   autocomplete="new-password"
+                                   placeholder="Tối thiểu 6 ký tự" />
+
+                            <span asp-validation-for="Input.Password"
+                                  class="identity-field-error">
+                            </span>
+                        </div>
+
+                        <div class="identity-form-group">
+                            <label asp-for="Input.ConfirmPassword">
+                                Xác nhận mật khẩu
+                            </label>
+
+                            <input asp-for="Input.ConfirmPassword"
+                                   class="identity-input"
+                                   autocomplete="new-password"
+                                   placeholder="Nhập lại mật khẩu" />
+
+                            <span asp-validation-for="Input.ConfirmPassword"
+                                  class="identity-field-error">
+                            </span>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            class="identity-submit">
+                        Tạo tài khoản
+                        <span>→</span>
+                    </button>
+                </form>
+
+                <p class="identity-switch">
+                    Đã có tài khoản?
+
+                    <a asp-page="./Login"
+                       asp-route-returnUrl="@Model.ReturnUrl"
+                       class="identity-link">
+                        Đăng nhập ngay
+                    </a>
+                </p>
+
+                <div class="identity-security-note">
+                    Bằng việc đăng ký, bạn đồng ý cung cấp thông tin
+                    để PetCare Shop xử lý đơn hàng và quản lý tài khoản.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
